@@ -1,14 +1,14 @@
 const { Pool } = require('pg');
 /* app.use(express.static('public')); */
-const pool = new Pool({
+/* const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
-});
+}); */
 
-/* const pool = new Pool({
+const pool = new Pool({
   connectionString: "postgres://dev:ABC123@localhost/postgres",
   ssl: false
-}); */
+});
 const http = require('http');
 var bodyParser = require('body-parser');
 var moment = require('moment'); 
