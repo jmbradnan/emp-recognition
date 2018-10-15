@@ -1,6 +1,6 @@
 {
   "name": "Employee-recognition",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "An employee recognition app",
   "main": "index.js",
   "scripts": {
@@ -13,10 +13,10 @@
     "express": "^4.13.3",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",
-    "express-sessions": "^1.0.6",
     "jquery": "^3.3.1",
     "moment": "^2.22.2",
     "pg": "^7.5.0",
+    "popper.js": "^1.14.4",
     "request": "^2.88.0"
   },
   "engines": {
@@ -32,6 +32,5 @@
     "express"
   ],
   "author": "Jackie Bradnan, Jeevan Topgi, Victor Wang",
-  ],
   "license": "MIT"
 }
