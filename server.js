@@ -11,7 +11,7 @@ const pool = new Pool({
 });
 const http = require('http');
 var bodyParser = require('body-parser');
-var moment = require('moment'); 
+var moment = require('moment');
 var express = require('express');
 const path = require('path');
 var app = express();
@@ -22,11 +22,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.get('/', (req, res) => res.render('pages/index'));
-/* 
-app.get('/', function(request, response) {
-  response.send('Hello World!')
-}) */
+
+app.get('/', (req, res) => res.render('pages/login'));
+
+app.get('/homepage', (req, res) => res.render('pages/homepage'));
 
 app.get('/db', async (req, res) => {
     try {
@@ -40,11 +39,11 @@ app.get('/db', async (req, res) => {
       res.send("Error " + err);
     }
   });
-  
-  
-//add a new user 
+
+
+//add a new user
 app.post('/new-user',function(req,res){
-  var data = [req.body.fname, req.body.lname, req.body.email, req.body.password];  
+  var data = [req.body.fname, req.body.lname, req.body.email, req.body.password];
   console.log(data);
   //add new user to user table
 /*   pool.query("INSERT INTO users SET ?", post, function(err, result){
