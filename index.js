@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+
 /* app.use(express.static('public')); */
 /* const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -9,11 +10,13 @@ const pool = new Pool({
   connectionString: "postgres://dev:ABC123@localhost/postgres",
   ssl: false
 });
+
 const http = require('http');
 var bodyParser = require('body-parser');
 var moment = require('moment');
 var express = require('express');
 const path = require('path');
+
 var app = express();
 
 app.set('port', (process.env.PORT || 5000));
