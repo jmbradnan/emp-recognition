@@ -4,7 +4,8 @@
   "description": "An employee recognition app",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "mocha"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -12,6 +13,7 @@
     "express": "^4.13.3",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",
+    "faker": "^4.1.0",
     "jquery": "^3.3.1",
     "moment": "^2.22.2",
     "pg": "^7.5.0",
@@ -30,5 +32,9 @@
     "express"
   ],
   "author": "Jackie Bradnan, Jeevan Topgi, Victor Wang",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^5.2.0",
+    "zombie": "^6.1.3"
+  }
 }
