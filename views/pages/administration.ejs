@@ -47,7 +47,10 @@
 		<legend>Select a User to Edit</legend>
           <ul>
             <% results.forEach(function(r) { %>
-              <li><%= r.id %> - <%= r.fname %></li>
+              <li>
+              <input type="radio" name="selected_user" value=<%= r.id %> onclick="editUser()">
+              <%= r.id %> - <%= r.fname %>, <%=r.lname %>
+              </li>
             <% }); %>
           </ul>
 	</fieldset>
