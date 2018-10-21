@@ -1,15 +1,17 @@
 const { Pool } = require('pg');
 
-/* 
+
  const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
-}); */
+}); 
 
+/* 
  const pool = new Pool({
    connectionString: "postgres://dev:ABC123@localhost/postgres",
    ssl: false
  });
+ */
 
 const http = require('http');
 var bodyParser = require('body-parser');
@@ -62,12 +64,6 @@ app.post('/new-user',function(req,res){
   var data = [req.body.fname, req.body.lname, req.body.email, req.body.password];
   console.log(data);
   //add new user to user table
-/*   pool.query("INSERT INTO users SET ?", post, function(err, result){
-    if(err){
-      next(err);
-      return;
-    }
-}) */
   var sql = 'INSERT INTO users (fname, lname, email, password) VALUES ($1, $2, $3, $4) RETURNING id';
   pool.query(sql, data, function(err, result) {
 	  console.log("in query");

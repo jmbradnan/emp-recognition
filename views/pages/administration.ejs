@@ -42,14 +42,24 @@
 		</form>
 	</fieldset>
 	
-<div class="container">
-<h2>Database Results</h2>
+<!-- Select Existing User -->
+	<fieldset class="starthidden" id="select_user">
+		<legend>Select a User to Edit</legend>
+          <ul>
+            <% results.forEach(function(r) { %>
+              <li><%= r.id %> - <%= r.fname %></li>
+            <% }); %>
+          </ul>
+	</fieldset>
 
-<ul>
-    <% results.forEach(function(r) { %>
-        <li><%= r.id %> - <%= r.fname %></li>
-    <% }); %>
-</ul>
+	<!-- Search For User -->
+	<fieldset class="starthidden" id="search_for_user">
+		<div id="search_controls">
+			<legend>Type in name of user to search for...</legend>
+			<label>Name: <input type="text" class="input-field" id="name_search" required></label >
+    <input type="button" id="search_btn" value="search" onclick="searchForUser()">
+    </div>
+</fieldset>
 
 </div>
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
