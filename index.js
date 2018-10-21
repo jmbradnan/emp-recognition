@@ -36,6 +36,19 @@ app.get('/db', async (req, res) => {
       res.send("Error: " + err);
     }
 });
+
+app.get('/show-all-users', async (req, res) => {
+    try {
+      const client = await pool.connect()
+      const result = await client.query('SELECT * FROM users');
+      const results = { 'results': (result) ? result.rows : null};
+      res.render('pages/administration', results );
+      client.release();
+    } catch (err) {
+      console.error(err);
+      res.send("Error: " + err);
+    }
+});
   
 // get user fields by id  
 app.get('/get-user', async (req, res) => {
@@ -55,21 +68,27 @@ app.get('/get-user', async (req, res) => {
 });
 
 // update user info
+app.get('/delete-user', async(req, res) => {
+  try {
+    const client = await pool.connect();
+    const queryResult = await client.query('DELETE FROM users WHERE id=($1)', [req.query.id]);
+    res.render('pages/administration');
+    client.release();
+  } catch (err) {
+        console.error(err);
+    res.send("Error: " + err);
+  }
+});
+
+// update user info
 app.get('/update-user', async(req, res) => {
   try {
     const client = await pool.connect();
     // var id = "id=" + req.query.id;
     const queryResult = await client.query('UPDATE users SET fname=($1), lname=($2), email=($3), password=($4) WHERE id=($5)',
     [req.query.fname, req.query.lname, req.query.email, req.query.password, req.query.id]);
+    res.redirect('pages/administration');
     client.release();
-    // var fname = "fname=" + req.query.fname;
-    // var lname = "lname=" + req.query.lname;
-    // var email = "email=" + req.query.email;
-    // var password = "password=" + req.query.password;
-    // var queryConfig = {
-    //   text: 'UPDATE users SET (fname, lname, email, password) VALUES($1, $2, $3, $4) WHERE id;',
-    //   values: [req.query.fname, req.query.lname, req.query.email, req.query.password, req.query.id]
-    // };
   } catch (err) {
         console.error(err);
     res.send("Error: " + err);

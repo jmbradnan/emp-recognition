@@ -11,6 +11,16 @@ $(document).ready(function () {
   // selectClient();
 });
 
+function showUsers() {
+  fetch("/show-all-users").then(function(response) {
+    if(response.ok) {
+      console.log("ok");
+    } else {
+      console.log("error");
+    }
+  });
+}
+
 /* 
 This method sets the user id and shows additional properties for that user
 */
@@ -24,6 +34,21 @@ function editUser() {
   showFields('#editable_user_fields')
 }
 
+/*
+Delete user
+*/
+function deleteUser() {
+  var fields = $("#editable_user_fields .input-field");
+  var id = $('#user_id_edit').val();
+  var query = "/delete-user" + queryBuilder("id", id, fields);
+  fetch(query).then(function(response) {
+    if(response.ok) {
+      console.log("ok");
+    } else {
+      console.log("error");
+    }
+  });
+}
 
 function selectUser(id) {
   var url = "/get-user" + "?id=" + id;
@@ -45,12 +70,6 @@ function selectUser(id) {
 }
 
 function updateUser() {
-  // var id = $("input[name='user_id_edit']").val();
-  // var fname = $("input[name='user_fname_edit']").val();
-  // var lname = $("input[name='user_lname_edit']").val();
-  // var email = $("input[name='user_email_edit']").val();
-  // var password = $("input[name='user_password_edit']").val();
-  // var url = "/update-user" + "?id=" + id + "&fname=" + fname + "&lname=" + lname + "&email=" + email + "&password=" + password;
   var fields = $("#editable_user_fields .input-field");
   var id = $('#user_id_edit').val();
   var query = "/update-user" + queryBuilder("id", id, fields);
@@ -62,9 +81,23 @@ function updateUser() {
     }
   });
 }
+
+function searchForUser() {
+  alert("searchForUser nyi");
+}
+
+// Toggles display to all users
+function allUserDisplay() {
+  showFields('#all_user_fields');
+  hideFields('#new_user_fields');
+  hideFields('#select_user');
+  hideFields('#search_for_user');
+}
+
 // Toggles display to appropriate fields for adding new client
 function newUserDisplay(){
   showFields('#new_user_fields');
+  hideFields('#all_user_fields');
   hideFields('#select_user');
   hideFields('#search_for_user');
 }
@@ -72,6 +105,7 @@ function newUserDisplay(){
 // Toggles display to appropriate fields for editing existing user
 function editUserDisplay(){
   showFields('#select_user');
+  hideFields('#all_user_fields');
   hideFields('#new_user_fields');
   hideFields('#search_for_user');
 }
@@ -79,6 +113,7 @@ function editUserDisplay(){
 // Toggles Search controls
 function searchUserDisplay() {
   showFields('#search_for_user');
+  hideFields('#all_user_fields');
   hideFields('#new_user_fields');
   hideFields('#select_user');
 }
