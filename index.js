@@ -14,7 +14,6 @@ const http = require('http');
 var moment = require('moment');
 var express = require('express');
 const path = require('path');
-var bodyParser = require('body-parser');
 var app = express();
 
 app.set('port', (process.env.PORT || 5000));
