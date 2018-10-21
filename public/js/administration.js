@@ -50,6 +50,9 @@ function deleteUser() {
   });
 }
 
+/*
+Select a user
+*/
 function selectUser(id) {
   var url = "/get-user" + "?id=" + id;
   fetch(url).then(function(response) {
@@ -69,6 +72,9 @@ function selectUser(id) {
   });
 }
 
+/*
+Update a user
+*/
 function updateUser() {
   var fields = $("#editable_user_fields .input-field");
   var id = $('#user_id_edit').val();

@@ -1,14 +1,9 @@
 const { Pool } = require('pg');
 
-//  const pool = new Pool({
-//   connectionString: process.env.DATABASE_URL,
-//   ssl: true
-// }); 
-
  const pool = new Pool({
-   connectionString: "postgres://dev:ABC123@localhost/postgres",
-   ssl: false
- });
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
+}); 
 
 const http = require('http');
 var moment = require('moment');
@@ -23,19 +18,7 @@ app.set('view engine', 'ejs');
 
 app.get('/homepage', (req, res) => res.render('pages/homepage'));
 
-app.get('/db', async (req, res) => {
-    try {
-      const client = await pool.connect()
-      const result = await client.query('SELECT * FROM users');
-      const results = { 'results': (result) ? result.rows : null};
-      res.render('pages/db', results );
-      client.release();
-    } catch (err) {
-      console.error(err);
-      res.send("Error: " + err);
-    }
-});
-
+// Show abbreviated list (names) of all users
 app.get('/show-all-users', async (req, res) => {
     try {
       const client = await pool.connect()
@@ -66,7 +49,7 @@ app.get('/get-user', async (req, res) => {
     }
 });
 
-// update user info
+// delete user
 app.get('/delete-user', async(req, res) => {
   try {
     const client = await pool.connect();
@@ -83,7 +66,6 @@ app.get('/delete-user', async(req, res) => {
 app.get('/update-user', async(req, res) => {
   try {
     const client = await pool.connect();
-    // var id = "id=" + req.query.id;
     const queryResult = await client.query('UPDATE users SET fname=($1), lname=($2), email=($3), password=($4) WHERE id=($5)',
     [req.query.fname, req.query.lname, req.query.email, req.query.password, req.query.id]);
     res.redirect('pages/administration');

@@ -16,7 +16,7 @@ function hideFields(identifier) {
   $(identifier).hide();
 }
 
-//builds query for AJAX calls.    Assumes some primary key (keyName=idkey)
+// builds query for client-server calls.    Assumes some primary key (keyName=idkey)
 // and arbitrary set of input fields with values
 function queryBuilder(keyName, idkey, fields) {
   var query = "?" + keyName + "=" + idkey;
