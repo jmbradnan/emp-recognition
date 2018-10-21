@@ -18,11 +18,12 @@ function editUser() {
   hideFields($('#new_user_fields'));
   hideFields($('#search_for_user'));
   //get the info for selected client
-  var myUser = $("input[name='selected_user']:checked").val();
+  var id = $("input[name='selected_user']:checked").val();
   hideFields('#select_user');
-  selectUser(myUser);
+  selectUser(id);
   showFields('#editable_user_fields')
 }
+
 
 function selectUser(id) {
   var url = "/get-user" + "?id=" + id;
@@ -44,7 +45,22 @@ function selectUser(id) {
 }
 
 function updateUser() {
-  alert("update user called");
+  // var id = $("input[name='user_id_edit']").val();
+  // var fname = $("input[name='user_fname_edit']").val();
+  // var lname = $("input[name='user_lname_edit']").val();
+  // var email = $("input[name='user_email_edit']").val();
+  // var password = $("input[name='user_password_edit']").val();
+  // var url = "/update-user" + "?id=" + id + "&fname=" + fname + "&lname=" + lname + "&email=" + email + "&password=" + password;
+  var fields = $("#editable_user_fields .input-field");
+  var id = $('#user_id_edit').val();
+  var query = "/update-user" + queryBuilder("id", id, fields);
+  fetch(query).then(function(response) {
+    if(response.ok) {
+      console.log("ok");
+    } else {
+      console.log("error");
+    }
+  });
 }
 // Toggles display to appropriate fields for adding new client
 function newUserDisplay(){

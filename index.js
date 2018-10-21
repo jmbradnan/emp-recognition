@@ -1,15 +1,20 @@
 const { Pool } = require('pg');
 
+//  const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: true
+// }); 
+
  const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
-}); 
+   connectionString: "postgres://dev:ABC123@localhost/postgres",
+   ssl: false
+ });
 
 const http = require('http');
 var moment = require('moment');
 var express = require('express');
 const path = require('path');
-
+var bodyParser = require('body-parser');
 var app = express();
 
 app.set('port', (process.env.PORT || 5000));
@@ -28,13 +33,12 @@ app.get('/db', async (req, res) => {
       client.release();
     } catch (err) {
       console.error(err);
-      res.send("Error " + err);
+      res.send("Error: " + err);
     }
-  });
+});
   
 // get user fields by id  
 app.get('/get-user', async (req, res) => {
-  var context = {};
   console.log(req.query.id)
       try {
       const client = await pool.connect()
@@ -48,6 +52,28 @@ app.get('/get-user', async (req, res) => {
       console.error(err);
       res.send("Error " + err);
     }
+});
+
+// update user info
+app.get('/update-user', async(req, res) => {
+  try {
+    const client = await pool.connect();
+    // var id = "id=" + req.query.id;
+    const queryResult = await client.query('UPDATE users SET fname=($1), lname=($2), email=($3), password=($4) WHERE id=($5)',
+    [req.query.fname, req.query.lname, req.query.email, req.query.password, req.query.id]);
+    client.release();
+    // var fname = "fname=" + req.query.fname;
+    // var lname = "lname=" + req.query.lname;
+    // var email = "email=" + req.query.email;
+    // var password = "password=" + req.query.password;
+    // var queryConfig = {
+    //   text: 'UPDATE users SET (fname, lname, email, password) VALUES($1, $2, $3, $4) WHERE id;',
+    //   values: [req.query.fname, req.query.lname, req.query.email, req.query.password, req.query.id]
+    // };
+  } catch (err) {
+        console.error(err);
+    res.send("Error: " + err);
+  }
 });
 
 // add a new user
