@@ -10,10 +10,15 @@
 //
 
 $(document).ready(function () {
-  selectClient();
+  // selectClient();
 });
 
-Handlebars.registerHelper('formatTime', function (date, format) {
-    var mmnt = moment(date);
-    return mmnt.format(format);
-});
+// Handlebars.registerHelper('formatTime', function (date, format) {
+//     var mmnt = moment(date);
+//     return mmnt.format(format);
+// });
+
+//flips display to appropriate fields for adding new client
+function newUserDisplay(){
+  showFields('#new_user_fields');
+}

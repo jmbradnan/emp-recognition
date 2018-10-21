@@ -1,15 +1,15 @@
 const { Pool } = require('pg');
 
-/* app.use(express.static('public')); */
+/* 
  const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
-}); 
+}); */
 
-// const pool = new Pool({
-//   connectionString: "postgres://dev:ABC123@localhost/postgres",
-//   ssl: false
-// });
+ const pool = new Pool({
+   connectionString: "postgres://dev:ABC123@localhost/postgres",
+   ssl: false
+ });
 
 const http = require('http');
 var bodyParser = require('body-parser');
@@ -36,6 +36,19 @@ app.get('/db', async (req, res) => {
       const result = await client.query('SELECT * FROM users');
       const results = { 'results': (result) ? result.rows : null};
       res.render('pages/db', results );
+      client.release();
+    } catch (err) {
+      console.error(err);
+      res.send("Error " + err);
+    }
+  });
+
+  app.get('/administration', async (req, res) => {
+    try {
+      const client = await pool.connect()
+      const result = await client.query('SELECT * FROM users');
+      const results = { 'results': (result) ? result.rows : null};
+      res.render('pages/administration', results );
       client.release();
     } catch (err) {
       console.error(err);

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Administration Page</title>
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+<body>
+
+	<!-- Initial Page Actions -->
+	<fieldset>
+		<legend>Choose action:</legend>
+
+		<div>
+			<label><input type="radio" name="navbtn" value="new_user" onclick="newUserDisplay()">New User</label>
+			<label><input type="radio" name="navbtn" value="editUser" onclick="editUserDisplay()"> Edit User</label>
+			<label><input type="radio" name="navbtn" value="searchForUser" onclick="searchUserDisplay()"> Search For User</label>
+		</div>
+	</fieldset>
+
+    <!--
+    <form method="post" onSubmit="return checkform(this);">
+      <input type="text" name="fname" id="fname" required>
+	  <input type="text" name="lname" id="lname" required>
+	  <input type="text" name="email" id="email" required>
+	  <input type="text" name="password" id="password" required>
+      <input type="submit" name="Add User" value="Add User" >
+    </form>
+    -->
+	<!-- Create New User -->
+	<fieldset class="starthidden" id="new_user_fields">
+		<legend>Enter New User Information</legend>
+		<form method="post" id="newUserForm" action="/new-user">
+			<label>First Name: <input type="text" name="fname"  required></label>
+			<label>Last Name: <input type="text"  name="lname"  required></label><br>
+			<label>Email: <input type="text" name="email"  required></label>
+			<label>Password: <input type="text" name="password"  required></label>
+			<br>
+
+			<td><input type="submit" name="Add User" value="Add User"></td>
+		</form>
+	</fieldset>
+	
+<div class="container">
+<h2>Database Results</h2>
+
+<ul>
+    <% results.forEach(function(r) { %>
+        <li><%= r.id %> - <%= r.fname %></li>
+    <% }); %>
+</ul>
+
+</div>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+		crossorigin="anonymous"></script>
+	<script src="/js/common.js"></script>
+	<script src="/js/administration.js"></script>
+</body>
+</html>

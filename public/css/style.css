@@ -1,0 +1,17 @@
+
+/*
+  Employee Recognition 
+  Jackie Bradnan
+  Oct.  20, 2018
+
+  style.css for employee recognition app
+*/
+
+.starthidden {
+    display:none;
+}
+
+#error_text {
+    color: red;
+    font-size: 200%;
+}
