@@ -21,15 +21,21 @@ function editUser() {
   var myUser = $("input[name='selected_user']:checked").val();
   hideFields('#select_user');
   selectUser(myUser);
+  showFields('#editable_user_fields')
 }
 
-function selectUser(myUser) {
-  var url = "/get-user" + "?id=" + myUser;
+function selectUser(id) {
+  var url = "/get-user" + "?id=" + id;
   fetch(url).then(function(response) {
     if(response.ok) {
       response.json().then(function(json) {
-        var test = json;
-        console.log(test);
+        var data = json[0];
+        console.log(data);
+        $("#user_id_edit").val(id);
+        $("#user_fname_edit").val(data.fname);
+        $("#user_lname_edit").val(data.lname);
+        $("#user_email_edit").val(data.email);
+        $("#user_password_edit").val(data.password);
       });
     } else {
       console.log("error");
@@ -37,6 +43,9 @@ function selectUser(myUser) {
   });
 }
 
+function updateUser() {
+  alert("update user called");
+}
 // Toggles display to appropriate fields for adding new client
 function newUserDisplay(){
   showFields('#new_user_fields');

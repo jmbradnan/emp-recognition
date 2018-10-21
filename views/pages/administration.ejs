@@ -41,6 +41,17 @@
 			<td><input type="submit" name="Add User" value="Add User"></td>
 		</form>
 	</fieldset>
+
+	<!-- Update User -->
+  <div class="starthidden" id="editable_user_fields">
+      <input type="text" style="visibility:hidden" id="user_id_edit">
+      <br>
+      <label>First Name: <input type="text" class="input-field" name="fname" id="user_fname_edit" required></label>
+	  <label>Last Name: <input type="text" class="input-field" name="lname" id="user_lname_edit" required></label>
+	  <label>Email: <input type="text" class="input-field" name="email" id="user_email_edit" required></label >
+      <label>Password: <input type="text" class="input-field" name="password" id="user_password_edit" required></label >
+      <input type="button" id="save_user_edits_btn" value="Save Changes" onclick="updateUser()">
+  </div>
 	
 <!-- Select Existing User -->
 	<fieldset class="starthidden" id="select_user">
