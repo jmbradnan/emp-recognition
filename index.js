@@ -1,9 +1,9 @@
 const { Pool } = require('pg');
 
- const pool = new Pool({
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
-}); 
+});
 
 const http = require('http');
 var moment = require('moment');
@@ -31,8 +31,8 @@ app.get('/show-all-users', async (req, res) => {
       res.send("Error: " + err);
     }
 });
-  
-// get user fields by id  
+
+// get user fields by id
 app.get('/get-user', async (req, res) => {
   console.log(req.query.id)
       try {
