@@ -1,6 +1,6 @@
 const Browser = require('zombie');
 var faker = require('faker');
-Browser.localhost('example.com', 5000);
+Browser.localhost("example.com", 5000);
 
 describe('User visits signup page', function() {
   const browser = new Browser();
