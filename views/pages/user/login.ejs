@@ -1,0 +1,18 @@
+<% include ../../partials/header %>
+<% if (unauthorized !== null) { %>
+  <div class="alert alert-danger" role="alert">Invalid Login. Please try again.</div>
+<% } %>
+
+<h1 class="text-center">Employee Recognition App</h1>
+<form action="/user/login/validate" method="POST">
+  <div class="form-group">
+    <label for="email">Email Address</label>
+    <input type="email" class="form-control" name="email">
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" class="form-control" name="password">
+  </div>
+  <button type="submit" class="btn btn-primary d-block mx-auto">Submit</button>
+</form>
+<% include ../../partials/footer %>

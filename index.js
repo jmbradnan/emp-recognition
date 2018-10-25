@@ -1,3 +1,7 @@
+/*
+ * App Setup
+ */
+
 require("dotenv").config();
 
 const { Pool } = require("pg");
@@ -9,25 +13,65 @@ const http = require("http");
 var moment = require("moment");
 var express = require("express");
 const path = require("path");
-var app = express();
+var bodyParser = require("body-parser");
 
+var app = express();
 app.set("port", process.env.PORT || 5000);
 app.use(express.static(__dirname + "/public"));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-app.get("/homepage", async (req, res) => {
+/*
+ * User Routes
+ */
+
+//user login page
+app.get("/user/login", async (req, res) => {
+  try {
+    res.locals.unauthorized = req.query.unauthorized || null;
+    res.render("pages/user/login");
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
+});
+
+//validate user login
+app.post("/user/login/validate", async (req, res) => {
   try {
     const client = await pool.connect();
-    const result = await client.query("SELECT * FROM users");
-    const results = { results: result ? result.rows : null };
-    res.render("pages/homepage", results);
+    const queryResult = await client.query(
+      "SELECT * FROM users WHERE email=($1) AND password=($2)",
+      [req.body.email, req.body.password]
+    );
+    if (queryResult.rows.length) {
+      res.redirect("/user/home?signin=1");
+    } else {
+      res.redirect("/user/login?unauthorized=1");
+    }
     client.release();
   } catch (err) {
     console.error(err);
-    res.send("Error " + err);
+    res.send("Error: " + err);
   }
 });
+
+//user homepage
+app.get("/user/home", async (req, res) => {
+  try {
+    res.locals.signin = req.query.signin || null;
+    res.render("pages/user/home");
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
+});
+
+/*
+ * Admin Routes
+ */
 
 // Show abbreviated list (names) of all users
 app.get("/show-all-users", async (req, res) => {
@@ -123,17 +167,28 @@ app.post("/new-user", function(req, res) {
 app.get("/administration", async (req, res) => {
   try {
     const client = await pool.connect();
-    const result = await client.query("SELECT * FROM users");
+    const result = await client.query("select * from users");
     const results = { results: result ? result.rows : null };
     res.render("pages/administration", results);
     client.release();
   } catch (err) {
     console.error(err);
-    res.send("Error " + err);
+    res.send("error " + err);
   }
 });
 
-app.get("/", (req, res) => res.render("pages/login"));
+/*
+ * App routes
+ */
+
+app.get("/", async (req, res) => {
+  try {
+    res.redirect("/user/login");
+  } catch (err) {
+    console.error(err);
+    res.send("error " + err);
+  }
+});
 
 app.use(function(req, res) {
   res.status(404);
