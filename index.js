@@ -1,8 +1,8 @@
-const { Pool } = require('pg');
+require('dotenv').config()
 
+const { Pool } = require('pg');
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: process.env.DATABASE_URL
 });
 
 const http = require('http');
@@ -16,7 +16,18 @@ app.use(express.static(__dirname + '/public'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.get('/homepage', (req, res) => res.render('pages/homepage'));
+app.get('/homepage', async (req, res) => {
+  try {
+    const client = await pool.connect()
+    const result = await client.query('SELECT * FROM users');
+    const results = { 'results': (result) ? result.rows : null};
+    res.render('pages/homepage', results );
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
+  }
+});
 
 // Show abbreviated list (names) of all users
 app.get('/show-all-users', async (req, res) => {
@@ -104,7 +115,7 @@ app.get('/administration', async (req, res) => {
       console.error(err);
       res.send("Error " + err);
     }
-  });
+});
 
 app.get('/', (req, res) => res.render('pages/login'));
 

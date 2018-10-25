@@ -10,6 +10,7 @@
     "ci": "start-server-and-test http://localhost:5000 test"
   },
   "dependencies": {
+    "dotenv": "^6.1.0",
     "ejs": "^2.5.6",
     "express": "^4.13.3",
     "express-session": "^1.15.6",
@@ -36,6 +37,7 @@
   "license": "MIT",
   "devDependencies": {
     "mocha": "^5.2.0",
+    "prettier": "1.14.3",
     "start-server-and-test": "^1.7.4",
     "zombie": "^6.1.3"
   }
