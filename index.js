@@ -5,10 +5,15 @@
 require("dotenv").config();
 
 const { Pool } = require("pg");
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
-});
+// const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: true
+// });
+
+ const pool = new Pool({
+   connectionString: "postgres://dev:ABC123@localhost/postgres",
+   ssl: false
+ });
 
 const http = require("http");
 var moment = require("moment");
@@ -78,9 +83,11 @@ app.get("/user/home", async (req, res) => {
 app.get("/show-all-users", async (req, res) => {
   try {
     const client = await pool.connect();
-    const result = await client.query("SELECT * FROM users");
-    const results = { results: result ? result.rows : null };
-    res.render("pages/administration", results);
+    const queryResult = await client.query("SELECT * FROM users");
+    const results = { jsonData: queryResult ? queryResult.rows : null };
+    res.send(results.jsonData);
+    // const results = { results: result ? result.rows : null };
+    // res.render("pages/administration", results);
     client.release();
   } catch (err) {
     console.error(err);
@@ -112,7 +119,7 @@ app.get("/delete-user", async (req, res) => {
     const queryResult = await client.query("DELETE FROM users WHERE id=($1)", [
       req.query.id
     ]);
-    res.render("pages/administration");
+    res.render("/administration");
     client.release();
   } catch (err) {
     console.error(err);
@@ -121,25 +128,23 @@ app.get("/delete-user", async (req, res) => {
 });
 
 // update user info
-app.get("/update-user", async (req, res) => {
-  try {
-    const client = await pool.connect();
-    const queryResult = await client.query(
-      "UPDATE users SET fname=($1), lname=($2), email=($3), password=($4) WHERE id=($5)",
-      [
-        req.query.fname,
-        req.query.lname,
-        req.query.email,
-        req.query.password,
-        req.query.id
-      ]
-    );
-    res.redirect("pages/administration");
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("Error: " + err);
-  }
+app.post("/update-user", function(req, res) {
+    var data =       [
+        req.body.id,
+        req.body.fname,
+        req.body.lname,
+        req.body.email,
+        req.body.password,
+        req.body.signature
+      ];
+    console.log(data);
+    var sql = "UPDATE users SET fname=($2), lname=($3), email=($4), password=($5), signature=($6) WHERE id=($1)";
+    pool.query(sql, data, function(err, result) {
+    if (err) {
+      console.error(err);
+    }
+  });
+  res.redirect("/administration");
 });
 
 // add a new user
@@ -151,17 +156,15 @@ app.post("/new-user", function(req, res) {
     req.body.password
   ];
   console.log(data);
-  // add new user to user table
   var sql =
     "INSERT INTO users (fname, lname, email, password) VALUES ($1, $2, $3, $4) RETURNING id";
   pool.query(sql, data, function(err, result) {
-    console.log("in query");
     if (err) {
       console.error(err);
     }
     console.log(result.rows[0].id);
   });
-  res.redirect("/db");
+  res.redirect("/administration");
 });
 
 // get administration page
@@ -181,7 +184,6 @@ app.get("/administration", async (req, res) => {
 /*
  * App routes
  */
-
 app.get("/", async (req, res) => {
   try {
     res.redirect("/user/login");
