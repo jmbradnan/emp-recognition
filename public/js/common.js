@@ -6,6 +6,7 @@
   common.js contains common scripts for the Employee Recognition app
 */
 
+
 //reveal hidden fieldset
 function showFields(identifier) {
   $(identifier).show();

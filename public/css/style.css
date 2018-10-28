@@ -18,8 +18,8 @@
 
 .wrapper {
   position: relative;
-  width: 400px;
-  height: 200px;
+  width: 200px;
+  height: 100px;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -30,7 +30,24 @@
   position: absolute;
   left: 0;
   top: 0;
-  width:400px;
-  height:200px;
+  width:200px;
+  height:100px;
   background-color: white;
 }
+
+/*.navbar-nav > li{
+  padding-left:20px;
+  padding-right:20px;
+}
+
+.navbar-nav > li{
+  margin-left:20px;
+  margin-right:20px;
+}
+
+@media (min-width: 992px){
+    .navbar li {
+        margin-left : 1em;
+        margin-right : 1em;
+    }
+}*/
