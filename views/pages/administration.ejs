@@ -67,8 +67,9 @@
 	</form>
 
 	<img id="signature_image">
-    <input type="button" id="signature_edits_btn" value="Change Signature" onclick="updateSignature()">
-    <!-- <input type="button" id="save_user_edits_btn" value="Save Changes" onclick="updateUser()"> -->
+    <!-- <input type="button" id="signature_edits_btn" value="Change Signature" onclick="updateSignature()"> -->
+	<button class="pill" id="signature_edits_btn" value="Change Signature" onclick="updateSignature()"><i class="fa fa-star"></i>Change Signature</button>
+     <input type="button" id="save_user_edits_btn" value="Save Changes" onclick="updateUser()"> -->
 	  <input type="button" id="delete_user_edits_btn" value="Delete User" onclick="deleteUser()">
   </fieldset>
 
@@ -103,10 +104,13 @@
 </fieldset>
 
 </div>
-		<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+    <link rel="stylesheet" href="css/kickstart.css" media="all" /> <!-- KICKSTART -->
+	<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
 		crossorigin="anonymous"></script>
+	<script src="js/kickstart.js"></script> <!-- KICKSTART -->
+    
 	<script src="/js/common.js"></script>
 	<script src="/js/administration.js"></script>
 
