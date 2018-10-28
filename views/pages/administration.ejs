@@ -22,7 +22,7 @@
 		</div>
 		</div>
 	</nav>
-<br>
+	<br>
 
 	<!-- Display All Users -->
 	<fieldset class="starthidden" id="all_user_fields">
@@ -82,27 +82,56 @@
 	</div>
 	</fieldset>
 
-	<!-- Update User -->
-
+	
+	<!-- Edit User -->
 	<fieldset class="starthidden" id="editable_user_fields">
-	<form method="post" id="editUserForm" action="/update-user">
+	<div class="container">
+		<h5>New User Information</h5>
+		<form method="post" class="form-horizontal" id="editUserForm" action="/update-user">
+		<!-- First Name -->
+		<div class="form-group">
+			<label for="user_fname_edit" class="col-sm-2 control-label">First Name</label>
+			<div class="col-sm-10">
+				<input id="user_fname_edit" type="text" class="form-control input-field" name="fname" placeholder="First Name" required>
+			</div>
+		</div>
+		<!-- Last Name -->
+		<div class="form-group">
+			<label for="user_lname_edit" class="col-sm-2 control-label">Last Name</label>
+			<div class="col-sm-10">
+				<input id="user_lname_edit" type="text" class="form-control input-field" name="lname" placeholder="Last Name" required>
+			</div>
+		</div>
+		<!-- Email -->
+		<div class="form-group">
+			<label for="user_email_edit" class="col-sm-2 control-label">Email</label>
+			<div class="col-sm-10">
+				<input id="user_email_edit" type="email" class="form-control input-field" name="email" placeholder="Email" required>
+			</div>
+		</div>
+		<!-- Password -->
+		<div class="form-group">
+			<label for="user_password_edit" class="col-sm-2 control-label">Password</label>
+			<div class="col-sm-10">
+				<input id="user_password_edit" type="password" class="form-control input-field" name="password" placeholder="Password" required>
+			</div>
+		</div>
+		<!-- Signature -->
+		<div class="form-group">
+		<label for="signature_img" class="col-sm-2 control-label">Signature</label>
+		<img id="signature_image">
+		</div>
 
-      <label>First Name: </label><input type="text" class="input-field" name="fname" id="user_fname_edit" required>
-	  <label>Last Name: </label><input type="text" class="input-field" name="lname" id="user_lname_edit" required>
-	  <label>Email: </label><input type="text" class="input-field" name="email" id="user_email_edit" required>
-      <label>Password: </label><input type="text" class="input-field" name="password" id="user_password_edit" required>
-	  <input type="submit" name="Update User" value="Update User">
+		<input type="button" class="col-sm-2" id="signature_edits_btn" value="Change Signature" onclick="updateSignature()">
+		<input type="button" class="col-sm-2" id="delete_user_edits_btn" value="Delete User" onclick="deleteUser()"><br><br>
+	  	<input type="submit" class="col-sm-2" name="Update User" value="Update User">
+
 	  <!-- Hidden Fields -->
 	  <input type="text" style="visibility:hidden" id="user_id_edit" name="id">
-	  <label>Signature: </label><input type="text" style="visibility:hidden" class="input-field" name="signature" id="user_signature_edit">
-
+	  <input type="text" style="visibility:hidden" class="input-field" name="signature" id="user_signature_edit">
+	</div>
 	</form>
-
-	<img id="signature_image">
-    <!-- <input type="button" id="signature_edits_btn" value="Change Signature" onclick="updateSignature()"> -->
-	<button class="pill" id="signature_edits_btn" value="Change Signature" onclick="updateSignature()"><i class="fa fa-star"></i>Change Signature</button>
-     <input type="button" id="save_user_edits_btn" value="Save Changes" onclick="updateUser()"> -->
-	  <input type="button" id="delete_user_edits_btn" value="Delete User" onclick="deleteUser()">
+	  
   </fieldset>
 
   <!-- Update Signature -->
@@ -114,17 +143,19 @@
   </fieldset>
 
 <!-- Select Existing User -->
+<div class="container">
 	<fieldset class="starthidden" id="select_user">
-		<legend>Select a User to Edit</legend>
-          <ul>
+		<h5>Select a User to Edit</h5>
+          <ul style="list-style-type:none">
             <% results.forEach(function(r) { %>
               <li>
               <input type="radio" name="selected_user" value=<%= r.id %> onclick="editUser()">
-              <%= r.id %> - <%= r.fname %>, <%=r.lname %>
+              <%= r.fname %>, <%=r.lname %>
               </li>
             <% }); %>
           </ul>
 	</fieldset>
+</div>
 
 	<!-- Search For User -->
 	<fieldset class="starthidden" id="search_for_user">
