@@ -15,6 +15,7 @@ var express = require("express");
 const path = require("path");
 var bodyParser = require("body-parser");
 var faker = require('faker');
+var moment = require('moment');
 
 var app = express();
 app.set("port", process.env.PORT || 5000);
@@ -23,6 +24,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.locals.moment = moment;
 
 /*
  * User Routes
@@ -83,7 +85,7 @@ app.post("/user/award/create", async (req, res) => {
         req.body.date
       ]
     );
-    res.redirect("/pages/user/awards")
+    res.redirect("/user/awards")
     client.release();
   } catch (err) {
     console.error(err);
