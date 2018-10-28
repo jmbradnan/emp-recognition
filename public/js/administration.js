@@ -47,6 +47,14 @@ document.getElementById('save-png').addEventListener('click', function () {
   showFields('#editable_user_fields');
 });
 
+function createSignature() {
+  var data = signaturePad.toDataURL('image/png');
+  $("#user_signature_initial").val(data);
+  hideFields('#enter_signature');
+  showFields('#hidden_signature');
+  $("#new_signature").attr("src", data);
+}
+
 /* 
 This method sets the user id and shows additional properties for that user
 */

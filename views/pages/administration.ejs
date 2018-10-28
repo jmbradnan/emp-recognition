@@ -75,10 +75,28 @@
 			</div>
 		</div>
 		<br>
-			
-		<td><input type="submit" name="Add User" value="Add User"></td>
-		
+
+		<!-- Hidden Fields -->
+	  	<input type="text" style="visibility:hidden" class="input-field" name="signature" id="user_signature_initial">
+
+		<input type="submit" class="col-sm-2 float-right" name="Add User" value="Add User">
 		</form>
+
+		<!-- Signature Entry -->
+		<div id="enter_signature" class="form-group">
+		<label>Draw signature below</label>
+    	<div class="wrapper">
+      	<canvas id="signature-pad" class="signature-pad" width=400 height=200></canvas>
+    	</div>
+		
+    	<button onclick="createSignature()">Save Signature</button>
+		</div>
+		
+	  	<!-- Signature Display -->
+		<div id="hidden_signature" class="form-group starthidden">
+		<label for="new_signature" class="col-sm-2 control-label">Signature</label>
+		<img id="new_signature">
+		</div>
 	</div>
 	</fieldset>
 
@@ -159,9 +177,9 @@
 
 	<!-- Search For User -->
 	<fieldset class="starthidden" id="search_for_user">
-		<div id="search_controls">
-			<legend>Type in name of user to search for...</legend>
-			<label>Name: <input type="text" class="input-field" id="name_search" required></label >
+		<div class="form-group" id="search_controls">
+			<h5>Type in name of user to search for...</h5>
+			<label class="col-sm-2 control-label">Name: <input type="text" class="input-field" id="name_search" required></label >
     <input type="button" id="search_btn" value="search" onclick="searchForUser()">
     </div>
 </fieldset>
