@@ -183,7 +183,6 @@ app.get("/delete-user", async (req, res) => {
     const queryResult = await client.query("DELETE FROM users WHERE id=($1)", [
       req.query.id
     ]);
-    res.render("/administration");
     client.release();
   } catch (err) {
     console.error(err);
@@ -217,11 +216,12 @@ app.post("/new-user", function(req, res) {
     req.body.fname,
     req.body.lname,
     req.body.email,
-    req.body.password
+    req.body.password, 
+    req.body.signature
   ];
   console.log(data);
   var sql =
-    "INSERT INTO users (fname, lname, email, password) VALUES ($1, $2, $3, $4) RETURNING id";
+    "INSERT INTO users (fname, lname, email, password, signature) VALUES ($1, $2, $3, $4, $5) RETURNING id";
   pool.query(sql, data, function(err, result) {
     if (err) {
       console.error(err);
