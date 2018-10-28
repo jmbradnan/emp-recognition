@@ -27,7 +27,9 @@
 
 	<ul>
     <% results.forEach(function(r) { %>
-        <li><%= r.id %> - <%= r.fname %></li>
+        <li>
+			<%= r.id %> - <%= r.fname %> <%= r.lname %> <%= r.email %>
+		</li>
     <% }); %>
 	</ul>
 
@@ -35,15 +37,6 @@
 	</fieldset>
 
 
-    <!--
-    <form method="post" onSubmit="return checkform(this);">
-      <input type="text" name="fname" id="fname" required>
-	  <input type="text" name="lname" id="lname" required>
-	  <input type="text" name="email" id="email" required>
-	  <input type="text" name="password" id="password" required>
-      <input type="submit" name="Add User" value="Add User" >
-    </form>
-    -->
 	<!-- Create New User -->
 	<fieldset class="starthidden" id="new_user_fields">
 		<legend>Enter New User Information</legend>
@@ -59,16 +52,33 @@
 	</fieldset>
 
 	<!-- Update User -->
-  <div class="starthidden" id="editable_user_fields">
-      <input type="text" style="visibility:hidden" id="user_id_edit">
-      <br>
-      <label>First Name: <input type="text" class="input-field" name="fname" id="user_fname_edit" required></label>
-	  <label>Last Name: <input type="text" class="input-field" name="lname" id="user_lname_edit" required></label>
-	  <label>Email: <input type="text" class="input-field" name="email" id="user_email_edit" required></label >
-      <label>Password: <input type="text" class="input-field" name="password" id="user_password_edit" required></label >
-      <input type="button" id="save_user_edits_btn" value="Save Changes" onclick="updateUser()">
+
+	<fieldset class="starthidden" id="editable_user_fields">
+	<form method="post" id="editUserForm" action="/update-user">
+
+      <input type="text" style="visibility:hidden" id="user_id_edit" name="id">
+
+      <label>First Name: </label><input type="text" class="input-field" name="fname" id="user_fname_edit" required>
+	  <label>Last Name: </label><input type="text" class="input-field" name="lname" id="user_lname_edit" required>
+	  <label>Email: </label><input type="text" class="input-field" name="email" id="user_email_edit" required>
+      <label>Password: </label><input type="text" class="input-field" name="password" id="user_password_edit" required>
+	  <label>Signature: </label><input type="text" class="input-field" name="signature" id="user_signature_edit">
+	  <input type="submit" name="Update User" value="Update User">
+	</form>
+
+	<img id="signature_image">
+    <input type="button" id="signature_edits_btn" value="Change Signature" onclick="updateSignature()">
+    <!-- <input type="button" id="save_user_edits_btn" value="Save Changes" onclick="updateUser()"> -->
 	  <input type="button" id="delete_user_edits_btn" value="Delete User" onclick="deleteUser()">
-  </div>
+  </fieldset>
+
+  <!-- Update Signature -->
+  <fieldset class="starthidden" id="editable_user_signature">
+    <div class="wrapper">
+      <canvas id="signature-pad" class="signature-pad" width=400 height=200></canvas>
+    </div>
+    <button id="save-png">Save as PNG</button>
+  </fieldset>
 
 <!-- Select Existing User -->
 	<fieldset class="starthidden" id="select_user">
@@ -93,9 +103,12 @@
 </fieldset>
 
 </div>
+		<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
 		crossorigin="anonymous"></script>
 	<script src="/js/common.js"></script>
 	<script src="/js/administration.js"></script>
+
 </body>
 </html>
