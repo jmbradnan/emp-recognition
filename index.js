@@ -15,6 +15,8 @@ var moment = require("moment");
 var express = require("express");
 const path = require("path");
 var bodyParser = require("body-parser");
+var faker = require("faker");
+var moment = require("moment");
 
 var app = express();
 app.set("port", process.env.PORT || 5000);
@@ -23,6 +25,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.locals.moment = moment;
 
 /*
  * User Routes
@@ -64,6 +67,67 @@ app.get("/user/home", async (req, res) => {
   try {
     res.locals.signin = req.query.signin || null;
     res.render("pages/user/home");
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
+});
+
+//create award
+app.post("/user/award/create", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    await client.query(
+      "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4))",
+      [req.body.name, req.body.email, req.body.time, req.body.date]
+    );
+    res.redirect("/user/awards");
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
+});
+
+//show all awards
+app.get("/user/awards", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    var result = await client.query("SELECT * FROM awards");
+    const awards = { awards: result ? result.rows : null };
+    res.render("pages/user/awards", awards);
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
+});
+
+//reset user database
+app.get("/user/reset", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    await client.query("DROP TABLE IF EXISTS awards;");
+    await client.query(`
+      CREATE TABLE awards (
+        id serial PRIMARY KEY,
+        name varchar(64) NOT NULL,
+        email varchar(64) NOT NULL,
+        time time NOT NULL,
+        date date NOT NULL
+      );
+    `);
+    await client.query(
+      "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4))",
+      [
+        faker.name.findName(),
+        faker.internet.email(),
+        "04:05",
+        faker.date.past()
+      ]
+    );
+    res.render("pages/user/reset");
+    client.release();
   } catch (err) {
     console.error(err);
     res.send("Error: " + err);

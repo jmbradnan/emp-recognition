@@ -1,0 +1,27 @@
+<% include ../../partials/header %>
+
+<h1 class="text-center">Awards</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Time</th>
+      <th scope="col">Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for(var i=0; i<awards.length; i++) {%>
+       <tr>
+        <th scope="row"><%= awards[i].id %></th>
+        <td><%= awards[i].name %></td>
+        <td><%= awards[i].email %></td>
+        <td><%= moment(awards[i].time, 'HH:mm:ss').format('h:mm A') %></td>
+        <td><%= awards[i].date.toLocaleDateString("en-US") %></td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+<% include ../../partials/footer %>
+
