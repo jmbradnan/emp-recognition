@@ -4,30 +4,36 @@
 	<meta charset="utf-8">
 	<title>Administration Page</title>
     <link rel="stylesheet" href="/css/style.css" type="text/css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
 </head>
 
 <body>
 
 	<!-- Initial Page Actions -->
-	<fieldset>
-		<legend>Choose action:</legend>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  	<a class="navbar-brand" href="#">Administration</a>
+		<div class="nav navbar-nav container-fluid">
+			<li onclick="allUserDisplay()">All Users</li>
+			<li onclick="newUserDisplay()">New User</li>
+			<li onclick="editUserDisplay()">Edit User</li>
+			<li onclick="searchUserDisplay()">Search</li>
 
-		<div>
-		<label><input type="radio" name="navbtn" value="all_users" onclick="allUserDisplay()">Display All Users</label>
-		<label><input type="radio" name="navbtn" value="new_user" onclick="newUserDisplay()">New User</label>
-		<label><input type="radio" name="navbtn" value="editUser" onclick="editUserDisplay()"> Edit User</label>
-		<label><input type="radio" name="navbtn" value="searchForUser" onclick="searchUserDisplay()"> Search For User</label>
 		</div>
-	</fieldset>
+		</div>
+	</nav>
+	<br>
 
 	<!-- Display All Users -->
 	<fieldset class="starthidden" id="all_user_fields">
 	<div class="container">
-	<h2>Database Results</h2>
+	<h5>All Users</h5>
 
 	<ul>
     <% results.forEach(function(r) { %>
-        <li><%= r.id %> - <%= r.fname %></li>
+        <li>
+			<%= r.fname %> <%= r.lname %> email: <%= r.email %>
+		</li>
     <% }); %>
 	</ul>
 
@@ -35,67 +41,158 @@
 	</fieldset>
 
 
-    <!--
-    <form method="post" onSubmit="return checkform(this);">
-      <input type="text" name="fname" id="fname" required>
-	  <input type="text" name="lname" id="lname" required>
-	  <input type="text" name="email" id="email" required>
-	  <input type="text" name="password" id="password" required>
-      <input type="submit" name="Add User" value="Add User" >
-    </form>
-    -->
 	<!-- Create New User -->
 	<fieldset class="starthidden" id="new_user_fields">
-		<legend>Enter New User Information</legend>
-		<form method="post" id="newUserForm" action="/new-user">
-			<label>First Name: <input type="text" name="fname"  required></label>
-			<label>Last Name: <input type="text"  name="lname"  required></label><br>
-			<label>Email: <input type="text" name="email"  required></label>
-			<label>Password: <input type="text" name="password"  required></label>
-			<br>
+	<div class="container">
+		<h5>New User Information</h5>
+		<form class="form-horizontal" method="post" id="newUserForm" action="/new-user">
+		<!-- First Name -->
+		<div class="form-group">
+			<label for="inputFirstName" class="col-sm-2 control-label">First Name</label>
+			<div class="col-sm-10">
+				<input id="inputFirstName" type="text" class="form-control" name="fname" placeholder="First Name" required>
+			</div>
+		</div>
+		<!-- Last Name -->
+		<div class="form-group">
+			<label for="inputLastName" class="col-sm-2 control-label">Last Name</label>
+			<div class="col-sm-10">
+				<input id="inputLastName" type="text" class="form-control" name="lname" placeholder="Last Name" required>
+			</div>
+		</div>
+		<!-- Email -->
+		<div class="form-group">
+			<label for="inputEmail" class="col-sm-2 control-label">Email</label>
+			<div class="col-sm-10">
+				<input id="inputEmail" type="email" class="form-control" name="email" placeholder="Email" required>
+			</div>
+		</div>
+		<!-- Password -->
+		<div class="form-group">
+			<label for="inputPassword" class="col-sm-2 control-label">Password</label>
+			<div class="col-sm-10">
+				<input id="inputPassword" type="password" class="form-control" name="password" placeholder="Password" required>
+			</div>
+		</div>
+		<br>
 
-			<td><input type="submit" name="Add User" value="Add User"></td>
+		<!-- Hidden Fields -->
+	  	<input type="text" style="visibility:hidden" class="input-field" name="signature" id="user_signature_initial">
+
+		<input type="submit" class="col-sm-2 float-right" name="Add User" value="Add User">
 		</form>
+
+		<!-- Signature Entry -->
+		<div id="enter_signature" class="form-group">
+		<label>Draw signature below</label>
+    	<div class="wrapper">
+      	<canvas id="signature-pad" class="signature-pad" width=400 height=200></canvas>
+    	</div>
+		
+    	<button onclick="createSignature()">Save Signature</button>
+		</div>
+		
+	  	<!-- Signature Display -->
+		<div id="hidden_signature" class="form-group starthidden">
+		<label for="new_signature" class="col-sm-2 control-label">Signature</label>
+		<img id="new_signature">
+		</div>
+	</div>
 	</fieldset>
 
-	<!-- Update User -->
-  <div class="starthidden" id="editable_user_fields">
-      <input type="text" style="visibility:hidden" id="user_id_edit">
-      <br>
-      <label>First Name: <input type="text" class="input-field" name="fname" id="user_fname_edit" required></label>
-	  <label>Last Name: <input type="text" class="input-field" name="lname" id="user_lname_edit" required></label>
-	  <label>Email: <input type="text" class="input-field" name="email" id="user_email_edit" required></label >
-      <label>Password: <input type="text" class="input-field" name="password" id="user_password_edit" required></label >
-      <input type="button" id="save_user_edits_btn" value="Save Changes" onclick="updateUser()">
-	  <input type="button" id="delete_user_edits_btn" value="Delete User" onclick="deleteUser()">
-  </div>
+	
+	<!-- Edit User -->
+	<fieldset class="starthidden" id="editable_user_fields">
+	<div class="container">
+		<h5>New User Information</h5>
+		<form method="post" class="form-horizontal" id="editUserForm" action="/update-user">
+		<!-- First Name -->
+		<div class="form-group">
+			<label for="user_fname_edit" class="col-sm-2 control-label">First Name</label>
+			<div class="col-sm-10">
+				<input id="user_fname_edit" type="text" class="form-control input-field" name="fname" placeholder="First Name" required>
+			</div>
+		</div>
+		<!-- Last Name -->
+		<div class="form-group">
+			<label for="user_lname_edit" class="col-sm-2 control-label">Last Name</label>
+			<div class="col-sm-10">
+				<input id="user_lname_edit" type="text" class="form-control input-field" name="lname" placeholder="Last Name" required>
+			</div>
+		</div>
+		<!-- Email -->
+		<div class="form-group">
+			<label for="user_email_edit" class="col-sm-2 control-label">Email</label>
+			<div class="col-sm-10">
+				<input id="user_email_edit" type="email" class="form-control input-field" name="email" placeholder="Email" required>
+			</div>
+		</div>
+		<!-- Password -->
+		<div class="form-group">
+			<label for="user_password_edit" class="col-sm-2 control-label">Password</label>
+			<div class="col-sm-10">
+				<input id="user_password_edit" type="password" class="form-control input-field" name="password" placeholder="Password" required>
+			</div>
+		</div>
+		<!-- Signature -->
+		<div class="form-group">
+		<label for="signature_img" class="col-sm-2 control-label">Signature</label>
+		<img id="signature_image">
+		</div>
+
+		<input type="button" class="col-sm-2" id="signature_edits_btn" value="Change Signature" onclick="updateSignature()">
+		<input type="button" class="col-sm-2" id="delete_user_edits_btn" value="Delete User" onclick="deleteUser()"><br><br>
+	  	<input type="submit" class="col-sm-2" name="Update User" value="Update User">
+
+	  <!-- Hidden Fields -->
+	  <input type="text" style="visibility:hidden" id="user_id_edit" name="id">
+	  <input type="text" style="visibility:hidden" class="input-field" name="signature" id="user_signature_edit">
+	</div>
+	</form>
+	  
+  </fieldset>
+
+  <!-- Update Signature -->
+  <fieldset class="starthidden" id="editable_user_signature">
+    <div class="wrapper">
+      <canvas id="signature-pad" class="signature-pad" width=400 height=200></canvas>
+    </div>
+    <button id="save-png">Save as PNG</button>
+  </fieldset>
 
 <!-- Select Existing User -->
+<div class="container">
 	<fieldset class="starthidden" id="select_user">
-		<legend>Select a User to Edit</legend>
-          <ul>
+		<h5>Select a User to Edit</h5>
+          <ul style="list-style-type:none">
             <% results.forEach(function(r) { %>
               <li>
               <input type="radio" name="selected_user" value=<%= r.id %> onclick="editUser()">
-              <%= r.id %> - <%= r.fname %>, <%=r.lname %>
+              <%= r.fname %>, <%=r.lname %>
               </li>
             <% }); %>
           </ul>
 	</fieldset>
+</div>
 
 	<!-- Search For User -->
 	<fieldset class="starthidden" id="search_for_user">
-		<div id="search_controls">
-			<legend>Type in name of user to search for...</legend>
-			<label>Name: <input type="text" class="input-field" id="name_search" required></label >
+		<div class="form-group" id="search_controls">
+			<h5>Type in name of user to search for...</h5>
+			<label class="col-sm-2 control-label">Name: <input type="text" class="input-field" id="name_search" required></label >
     <input type="button" id="search_btn" value="search" onclick="searchForUser()">
     </div>
 </fieldset>
 
 </div>
-	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-		crossorigin="anonymous"></script>
+	
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 	<script src="/js/common.js"></script>
 	<script src="/js/administration.js"></script>
+
 </body>
 </html>
