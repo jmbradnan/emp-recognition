@@ -14,8 +14,8 @@ var moment = require("moment");
 var express = require("express");
 const path = require("path");
 var bodyParser = require("body-parser");
-var faker = require('faker');
-var moment = require('moment');
+var faker = require("faker");
+var moment = require("moment");
 
 var app = express();
 app.set("port", process.env.PORT || 5000);
@@ -78,14 +78,9 @@ app.post("/user/award/create", async (req, res) => {
     const client = await pool.connect();
     await client.query(
       "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4))",
-      [
-        req.body.name,
-        req.body.email,
-        req.body.time,
-        req.body.date
-      ]
+      [req.body.name, req.body.email, req.body.time, req.body.date]
     );
-    res.redirect("/user/awards")
+    res.redirect("/user/awards");
     client.release();
   } catch (err) {
     console.error(err);
