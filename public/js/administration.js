@@ -31,7 +31,7 @@ var canvas = document.getElementById('signature-pad');
 // resizeCanvas();
 
 var signaturePad = new SignaturePad(canvas, {
-  backgroundColor: 'rgb(255, 255, 255)' // necessary for saving image as JPEG; can be removed is only saving as PNG or SVG
+  // backgroundColor: 'rgb(255, 255, 255)' // necessary for saving image as JPEG; can be removed is only saving as PNG or SVG
 });
 
 document.getElementById('save-png').addEventListener('click', function () {
@@ -41,7 +41,7 @@ document.getElementById('save-png').addEventListener('click', function () {
   
   var data = signaturePad.toDataURL('image/png');
   $("#user_signature_edit").val(data);
-  console.log(data);
+  // console.log(data);
   $("#signature_image").attr("src", data);
   hideFields('#editable_user_signature');
   showFields('#editable_user_fields');
@@ -82,21 +82,6 @@ Display all users
 function showUsers() {
   fetch("/show-all-users").then(function(response) {
     if(response.ok) {
-  //     response.json().then(function(json) {
-  //       var data = json[0];
-  //       console.log(data);
-  //       $("#user_fname_show").val(data.fname);
-  //       $("#user_lname_show").val(data.lname);
-  //       $("#user_email_show").val(data.email);
-  //       $("#user_signature_show").val(data.signature);
-  //       signaturePad.fromDataURL("data:image/png;base64,iVBORw0K...");
-
-  // // Returns signature image as an array of point groups
-  // const signature = signaturePad.toData();
-
-  // // Draws signature image from an array of point groups
-  // signaturePad.fromData(signature);
-  //     });
       console.log("ok");
     } else {
       console.log("error");
@@ -113,7 +98,7 @@ function selectUser(id) {
     if(response.ok) {
       response.json().then(function(json) {
         var data = json[0];
-        console.log(data);
+        // console.log(data);
         $("#user_id_edit").val(id);
         $("#user_fname_edit").val(data.fname);
         $("#user_lname_edit").val(data.lname);
@@ -123,12 +108,6 @@ function selectUser(id) {
         $("#user_signature_edit").val(data.signature);
 
         $("#signature_image").attr("src", data.signature);
-        // signaturePad.fromDataUrl(data.signature);
-        // Returns signature image as an array of point groups
-      //   const signature = signaturePad.toData();
-
-      //  // Draws signature image from an array of point groups
-      //  signaturePad.fromData(signature);
       });
     } else {
       console.log("error");
@@ -140,25 +119,6 @@ function updateSignature() {
   hideFields('#editable_user_fields');
   showFields('#editable_user_signature');
 }
-
-/*
-Update a user
-*/
-// function updateUser() {
-//   var fields = $("#editable_user_fields .input-field");
-//   // var signatureRaw = $("#user_signature_edit").val();
-//   // var encodedImage = dataURItoBlob(signatureRaw, 'image/png');
-//   // console.log(signatureRaw);
-//   var id = $('#user_id_edit').val();
-//   var query = "/update-user" + queryBuilder("id", id, fields);
-//   fetch(query).then(function(response) {
-//     if(response.ok) {
-//       console.log("ok");
-//     } else {
-//       console.log("error");
-//     }
-//   });
-// }
 
 function searchForUser() {
   alert("searchForUser nyi");
@@ -199,25 +159,4 @@ function searchUserDisplay() {
   hideFields('#new_user_fields');
   hideFields('#select_user');
   hideFields('#editable_user_fields');
-}
-
-
-// https://stackoverflow.com/questions/28636294/how-to-decode-dataimage-pngbase64-to-a-real-image-using-javascript
-function dataURItoBlob(dataURI, type) {
-    // convert base64 to raw binary data held in a string
-    var byteString = atob(dataURI.split(',')[1]);
-
-    // separate out the mime component
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
-
-    // write the bytes of the string to an ArrayBuffer
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
-    for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-    }
-
-    // write the ArrayBuffer to a blob, and you're done
-    var bb = new Blob([ab], { type: type });
-    return bb;
 }
