@@ -5,16 +5,11 @@
 require("dotenv").config();
 
 const { Pool } = require("pg");
+
 const pool = new Pool({
-  connectionString: "postgres://dev:ABC123@localhost/postgres",
-  ssl: false
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
 });
-
-
-// const pool = new Pool({
-//   connectionString: process.env.DATABASE_URL,
-//   ssl: true
-// });
 
 const http = require("http");
 var moment = require("moment");

@@ -48,7 +48,9 @@ document.getElementById('save-png').addEventListener('click', function () {
   showFields('#editable_user_fields');
 });
 
-
+document.getElementById('clear').addEventListener('click', function () {
+  signaturePad.clear();
+});
 
 function createSignature() {
   var data = signaturePad.toDataURL('image/png');
