@@ -6,14 +6,6 @@
 
   Administration.js contains script to update users.
 */
-
-
-$(document).ready(function () {
-  // selectClient();
-});
-
-var canvas = document.getElementById('signature-pad');
-
 // Adjust canvas coordinate space taking into account pixel ratio,
 // to make it look crisp on mobile devices.
 // This also causes canvas to be cleared.
@@ -30,9 +22,18 @@ var canvas = document.getElementById('signature-pad');
 // window.onresize = resizeCanvas;
 // resizeCanvas();
 
-var signaturePad = new SignaturePad(canvas, {
-  // backgroundColor: 'rgb(255, 255, 255)' // necessary for saving image as JPEG; can be removed is only saving as PNG or SVG
+$(document).ready(function () {
+  // selectClient();
 });
+
+var canvas = document.getElementById('signature-pad');
+var signaturePad = new SignaturePad(canvas, {
+});
+
+var canvas2 = document.getElementById('signature-pad2');
+var signaturePad = new SignaturePad(canvas2, {
+});
+
 
 document.getElementById('save-png').addEventListener('click', function () {
   if (signaturePad.isEmpty()) {
@@ -46,6 +47,8 @@ document.getElementById('save-png').addEventListener('click', function () {
   hideFields('#editable_user_signature');
   showFields('#editable_user_fields');
 });
+
+
 
 function createSignature() {
   var data = signaturePad.toDataURL('image/png');
