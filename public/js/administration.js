@@ -98,14 +98,21 @@ function deleteUser() {
 /*
 Display all users
 */
-function showUsers() {
+function showAllUsers() {
   fetch("/show-all-users").then(function(response) {
+    console.log(response);
     if(response.ok) {
       console.log("ok");
     } else {
       console.log("error");
     }
   });
+}
+
+function showUsers() {
+  $('#admin_content-area').attr('src', 'displayusers');
+
+  // showAllUsers();
 }
 
 /*
@@ -134,10 +141,6 @@ function selectUser(id) {
   });
 }
 
-
-function showView() {
-  $(this).addClass("active")
-}
 
 /* 
  Show available reports

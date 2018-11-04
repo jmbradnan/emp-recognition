@@ -15,7 +15,7 @@
 	<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
   	<a class="navbar-brand" href="#">Employee Recognition</a>
 		<div class="nav navbar-nav container-fluid">
-			<li class="nav id="allUsersNavigation" onclick="allUserDisplay()">All Users</li>
+			<li class="nav id="allUsersNavigation" onclick="showUsers()">All Users</li>
 			<li class="nav id="newUserNavigation" onclick="createNewUser()">New User</li>
 			<li class="nav id="editUserNavigation" onclick="editUserDisplay()">Edit User</li>
 			<li class="nav id="reportsNavigation" onclick="reportsDisplay()">Reporting</li>
@@ -55,14 +55,8 @@ function setIframeHeight(id) {
 <!-- Content Area 
 https://www.dyn-web.com/tutorials/iframes/height/
 -->
-<div class="container" height=100>
 <div class="container">
-	<!-- 21:9 aspect ratio -->
-	<!-- <div class="embed-responsive embed-responsive-21by9"> -->
  	<iframe id="admin_content-area" frameBorder="0" marginheight="50" class="embed-responsive-item"  width="500" onload="setIframeHeight(this.id)"></iframe> 
- 	
-
-
 </div>
 
 
@@ -81,7 +75,6 @@ https://www.dyn-web.com/tutorials/iframes/height/
 
 	</div>
 	</fieldset>
-
 
 	
 	<!-- Edit User -->

@@ -151,9 +151,9 @@ app.get("/show-all-users", async (req, res) => {
     const client = await pool.connect();
     const queryResult = await client.query("SELECT * FROM users");
     const results = { jsonData: queryResult ? queryResult.rows : null };
-    res.send(results.jsonData);
+    // res.send(results.jsonData);
     // const results = { results: result ? result.rows : null };
-    // res.render("pages/administration", results);
+    res.render("pages/administration", results);
     client.release();
   } catch (err) {
     console.error(err);
@@ -161,9 +161,15 @@ app.get("/show-all-users", async (req, res) => {
   }
 });
 
-app.get("/testpage", async (req, res) => {
+app.get("/displayusers", async (req, res) => {
   try {
-    res.render('pages/admin/testpage');
+    const client = await pool.connect();
+    const queryResult = await client.query("SELECT * FROM users");
+    const data = { jsonData: queryResult ? queryResult.rows : null };
+    const results = data.jsonData;
+    console.log(results);
+    res.render("pages/admin/displayusers", {'results': results });
+    client.release();
   } catch (err) {
     console.error(err);
     res.send("error " + err);
