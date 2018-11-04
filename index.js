@@ -5,10 +5,8 @@
 require("dotenv").config();
 
 const { Pool } = require("pg");
-
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: process.env.DATABASE_URL
 });
 
 const http = require("http");
@@ -18,14 +16,26 @@ const path = require("path");
 var bodyParser = require("body-parser");
 var faker = require("faker");
 var moment = require("moment");
+var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn
+
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const postgresLocal = require('./lib/passport-local-postgres')(pool);
+passport.use(new LocalStrategy({usernameField: 'email'},postgresLocal.localStrategy));
+passport.serializeUser(postgresLocal.serializeUser);
+passport.deserializeUser(postgresLocal.deserializeUser);
 
 var app = express();
 app.set("port", process.env.PORT || 5000);
 app.use(express.static(__dirname + "/public"));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(require('morgan')('tiny'));
+app.use(require('cookie-parser')());
+app.use(require('body-parser').urlencoded({ extended: true }));
+app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.locals.moment = moment;
 
 /*
@@ -35,7 +45,6 @@ app.locals.moment = moment;
 //user login page
 app.get("/user/login", async (req, res) => {
   try {
-    res.locals.unauthorized = req.query.unauthorized || null;
     res.render("pages/user/login");
   } catch (err) {
     console.error(err);
@@ -43,40 +52,33 @@ app.get("/user/login", async (req, res) => {
   }
 });
 
-//validate user login
-app.post("/user/login/validate", async (req, res) => {
-  try {
-    const client = await pool.connect();
-    const queryResult = await client.query(
-      "SELECT * FROM users WHERE email=($1) AND password=($2)",
-      [req.body.email, req.body.password]
-    );
-    if (queryResult.rows.length) {
-      res.redirect("/user/home?signin=1");
-    } else {
-      res.redirect("/user/login?unauthorized=1");
-    }
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("Error: " + err);
-  }
-});
+//user login validation
+app.post('/user/login/validate',
+  passport.authenticate('local', { failureRedirect: '/user/login'}),
+  function(req, res) {
+    res.redirect('/user/home');
+  });
 
 //user homepage
-app.get("/user/home", async (req, res) => {
-  try {
-    res.locals.signin = req.query.signin || null;
-    res.render("pages/user/home");
-  } catch (err) {
-    console.error(err);
-    res.send("Error: " + err);
-  }
-});
+app.get('/user/home',
+  ensureLoggedIn("/user/login"),
+  function(req, res){
+    console.log(req)
+    res.render('pages/user/home');
+  });
+
+//user logout
+app.get('/user/logout',
+  function(req, res){
+    req.logout();
+    res.redirect('/user/login');
+  });
 
 //create award
-app.post("/user/award/create", async (req, res) => {
-  try {
+app.post('/user/award/create',
+  ensureLoggedIn("/user/login"),
+  async(req, res)=>{
+    try {
     const client = await pool.connect();
     await client.query(
       "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4))",
@@ -88,10 +90,12 @@ app.post("/user/award/create", async (req, res) => {
     console.error(err);
     res.send("Error: " + err);
   }
-});
+  });
 
 //show all awards
-app.get("/user/awards", async (req, res) => {
+app.get('/user/awards',
+  ensureLoggedIn("/user/login"),
+  async (req, res) =>{
   try {
     const client = await pool.connect();
     var result = await client.query("SELECT * FROM awards");
@@ -102,7 +106,7 @@ app.get("/user/awards", async (req, res) => {
     console.error(err);
     res.send("Error: " + err);
   }
-});
+  });
 
 //reset user database
 app.get("/user/reset", async (req, res) => {
@@ -212,7 +216,7 @@ app.post("/new-user", function(req, res) {
     req.body.fname,
     req.body.lname,
     req.body.email,
-    req.body.password, 
+    req.body.password,
     req.body.signature
   ];
   console.log(data);
