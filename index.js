@@ -176,6 +176,19 @@ app.get("/displayusers", async (req, res) => {
   }
 });
 
+app.get("/edituser", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query("select * from users");
+    const results = { results: result ? result.rows : null };
+    res.render("pages/admin/edituser", results);
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("error " + err);
+  }
+});
+
 app.get("/createuser", async (req, res) => {
   try {
     res.render('pages/admin/createuser');
