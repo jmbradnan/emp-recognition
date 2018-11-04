@@ -32,5 +32,5 @@ function queryBuilder(keyName, idkey, fields) {
 }
 
 //inits the datepicker and timepicker
-$('[data-toggle="datepicker"]').datepicker();
-$('.ui-timepicker-input').timepicker();
+// $('[data-toggle="datepicker"]').datepicker();
+// $('.ui-timepicker-input').timepicker();

@@ -1,6 +1,6 @@
 
 /*
-  Employee-Recognition 
+  Employee-Recognition: Administration.js
   Jackie Bradnan
   Oct 14, 2018
 
@@ -22,13 +22,18 @@
 // window.onresize = resizeCanvas;
 // resizeCanvas();
 
-$(document).ready(function () {
-  // selectClient();
+$(document).ready(function() {
+  // Highlight selected navigation
+    $(".nav > li").click(function(){
+      $(".nav > li.highlighted").removeClass("highlighted");
+      $(this).addClass("highlighted");
+    });
+    
 });
 
-var canvas = document.getElementById('signature-pad');
-var signaturePad = new SignaturePad(canvas, {
-});
+// var canvas = document.getElementById('signature-pad');
+// var signaturePad = new SignaturePad(canvas, {
+// });
 
 var canvas2 = document.getElementById('signature-pad2');
 var signaturePad = new SignaturePad(canvas2, {
@@ -59,6 +64,7 @@ function createSignature() {
   showFields('#hidden_signature');
   $("#new_signature").attr("src", data);
 }
+
 
 /* 
 This method sets the user id and shows additional properties for that user
@@ -128,6 +134,18 @@ function selectUser(id) {
   });
 }
 
+
+function showView() {
+  $(this).addClass("active")
+}
+
+/* 
+ Show available reports
+*/
+function reportsDisplay() {
+  showView();
+}
+
 function updateSignature() {
   hideFields('#editable_user_fields');
   showFields('#editable_user_signature');
@@ -147,13 +165,18 @@ function allUserDisplay() {
   showUsers();
 }
 
-// Toggles display to appropriate fields for adding new client
-function newUserDisplay(){
-  showFields('#new_user_fields');
-  hideFields('#all_user_fields');
-  hideFields('#select_user');
-  hideFields('#search_for_user');
-  hideFields('#editable_user_fields');
+// // Toggles display to appropriate fields for adding new client
+// function newUserDisplay(){
+//   showFields('#new_user_fields');
+//   hideFields('#all_user_fields');
+//   hideFields('#select_user');
+//   hideFields('#search_for_user');
+//   hideFields('#editable_user_fields');
+// }
+
+
+function createNewUser() {
+  $('#admin_content-area').attr('src', 'createuser');
 }
 
 // Toggles display to appropriate fields for editing existing user

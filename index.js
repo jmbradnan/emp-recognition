@@ -6,10 +6,16 @@ require("dotenv").config();
 
 const { Pool } = require("pg");
 
+// const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: true
+// });
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: "postgres://dev:ABC123@localhost/postgres",
+  ssl: false
 });
+
 
 const http = require("http");
 var moment = require("moment");
@@ -155,6 +161,24 @@ app.get("/show-all-users", async (req, res) => {
   }
 });
 
+app.get("/testpage", async (req, res) => {
+  try {
+    res.render('pages/admin/testpage');
+  } catch (err) {
+    console.error(err);
+    res.send("error " + err);
+  }
+});
+
+app.get("/createuser", async (req, res) => {
+  try {
+    res.render('pages/admin/createuser');
+  } catch (err) {
+    console.error(err);
+    res.send("error " + err);
+  }
+});
+
 // get user fields by id
 app.get("/get-user", async (req, res) => {
   console.log(req.query.id);
@@ -224,7 +248,8 @@ app.post("/new-user", function(req, res) {
     }
     console.log(result.rows[0].id);
   });
-  res.redirect("/administration");
+  // res.redirect("/administration");
+  res.send("user created successfully.");
 });
 
 // get administration page
