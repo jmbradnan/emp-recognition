@@ -3,6 +3,19 @@ var signaturePad = new SignaturePad(canvas2, {
 });
 
 
+document.getElementById('save-png').addEventListener('click', function () {
+  if (signaturePad.isEmpty()) {
+    return alert("Please provide a signature first.");
+  }
+  
+  var data = signaturePad.toDataURL('image/png');
+  $("#user_signature_edit").val(data);
+  // console.log(data);
+  $("#signature_image").attr("src", data);
+  hideFields('#editable_user_signature');
+  showFields('#editable_user_fields');
+});
+
 /*
 Select a user
 */
@@ -29,6 +42,21 @@ function selectUser(id) {
   });
 }
 
+/*
+Delete user
+*/
+function deleteUser() {
+  var fields = $("#editable_user_fields .input-field");
+  var id = $('#user_id_edit').val();
+  var query = "/delete-user" + queryBuilder("id", id, fields);
+  fetch(query).then(function(response) {
+    if(response.ok) {
+      console.log("ok");
+    } else {
+      console.log("error");
+    }
+  });
+}
 
 /* 
 This method sets the user id and shows additional properties for that user

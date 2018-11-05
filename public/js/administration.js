@@ -40,22 +40,22 @@ $(document).ready(function() {
 // });
 
 
-document.getElementById('save-png').addEventListener('click', function () {
-  if (signaturePad.isEmpty()) {
-    return alert("Please provide a signature first.");
-  }
+// document.getElementById('save-png').addEventListener('click', function () {
+//   if (signaturePad.isEmpty()) {
+//     return alert("Please provide a signature first.");
+//   }
   
-  var data = signaturePad.toDataURL('image/png');
-  $("#user_signature_edit").val(data);
-  // console.log(data);
-  $("#signature_image").attr("src", data);
-  hideFields('#editable_user_signature');
-  showFields('#editable_user_fields');
-});
+//   var data = signaturePad.toDataURL('image/png');
+//   $("#user_signature_edit").val(data);
+//   // console.log(data);
+//   $("#signature_image").attr("src", data);
+//   hideFields('#editable_user_signature');
+//   showFields('#editable_user_fields');
+// });
 
-document.getElementById('clear').addEventListener('click', function () {
-  signaturePad.clear();
-});
+// document.getElementById('clear').addEventListener('click', function () {
+//   signaturePad.clear();
+// });
 
 // function createSignature() {
 //   var data = signaturePad.toDataURL('image/png');
@@ -161,8 +161,8 @@ Select a user
  Show available reports
 */
 function reportsDisplay() {
-  showView();
-}
+  $('#admin_content-area').contents().find('body').html("");
+  $('#admin_content-area').attr('src', 'reports');}
 
 // function updateSignature() {
 //   hideFields('#editable_user_fields');
@@ -170,7 +170,8 @@ function reportsDisplay() {
 // }
 
 function searchForUser() {
-  alert("searchForUser nyi");
+  $('#admin_content-area').contents().find('body').html("");
+  $('#admin_content-area').attr('src', 'search');
 }
 
 // // Toggles display to all users
