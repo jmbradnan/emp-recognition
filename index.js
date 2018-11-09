@@ -54,7 +54,11 @@ app.locals.moment = moment;
 //user login page
 app.get("/user/login", async (req, res) => {
   try {
-    res.render("pages/user/login");
+    if (req.user === undefined) {
+      res.render("pages/user/login");
+    } else {
+      res.redirect("/user/home");
+    }
   } catch (err) {
     console.error(err);
     res.send("Error: " + err);
@@ -71,9 +75,16 @@ app.post(
 );
 
 //user homepage
-app.get("/user/home", ensureLoggedIn("/user/login"), function(req, res) {
-  console.log(req);
-  res.render("pages/user/home");
+app.get("/user/home", ensureLoggedIn("/user/login"), async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query("SELECT * FROM award_types");
+    const award_types = { award_types: result ? result.rows : null };
+    res.render("pages/user/home", award_types);
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
 });
 
 //user logout
@@ -90,8 +101,8 @@ app.post(
     try {
       const client = await pool.connect();
       await client.query(
-        "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4))",
-        [req.body.name, req.body.email, req.body.time, req.body.date]
+        "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
+        [req.body.type_id, req.user.id, req.body.name, req.body.email, req.body.time, req.body.date]
       );
       res.redirect("/user/awards");
       client.release();
@@ -106,7 +117,11 @@ app.post(
 app.get("/user/awards", ensureLoggedIn("/user/login"), async (req, res) => {
   try {
     const client = await pool.connect();
-    var result = await client.query("SELECT * FROM awards");
+    var result = await client.query(`
+      SELECT award_types.name as type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
+      FROM awards JOIN award_types ON awards.type_id = award_types.id
+      JOIN users ON awards.user_id = users.id
+    `);
     const awards = { awards: result ? result.rows : null };
     res.render("pages/user/awards", awards);
     client.release();
@@ -116,30 +131,12 @@ app.get("/user/awards", ensureLoggedIn("/user/login"), async (req, res) => {
   }
 });
 
-//reset user database
-app.get("/user/reset", async (req, res) => {
+//delete award
+app.post("/user/award/delete", ensureLoggedIn("/user/login"), async (req, res) => {
   try {
     const client = await pool.connect();
-    await client.query("DROP TABLE IF EXISTS awards;");
-    await client.query(`
-      CREATE TABLE awards (
-        id serial PRIMARY KEY,
-        name varchar(64) NOT NULL,
-        email varchar(64) NOT NULL,
-        time time NOT NULL,
-        date date NOT NULL
-      );
-    `);
-    await client.query(
-      "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4))",
-      [
-        faker.name.findName(),
-        faker.internet.email(),
-        "04:05",
-        faker.date.past()
-      ]
-    );
-    res.render("pages/user/reset");
+    await client.query("DELETE FROM awards WHERE id=($1)",[req.body.id]);
+    res.redirect("/user/awards");
     client.release();
   } catch (err) {
     console.error(err);
@@ -263,6 +260,76 @@ app.get("/", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.send("error " + err);
+  }
+});
+
+//reset and set database
+app.get("/reset", async (req, res) => {
+  try {
+    const client = await pool.connect();
+
+    //drop tables if exist
+    await client.query("DROP TABLE IF EXISTS award_types CASCADE;");
+    await client.query("DROP TABLE IF EXISTS users CASCADE;");
+    await client.query("DROP TABLE IF EXISTS awards CASCADE;");
+
+    //create tables
+    await client.query(`
+      CREATE TABLE award_types (
+        id serial PRIMARY KEY,
+        name varchar(64) NOT NULL
+      );
+    `);
+    await client.query(`
+      CREATE TABLE users (
+        id serial PRIMARY KEY,
+        fname varchar(64) NOT NULL,
+        lname varchar(64) NOT NULL,
+        email varchar(64) NOT NULL,
+        password varchar(64) NOT NULL
+      );
+    `);
+    await client.query(`
+      CREATE TABLE awards (
+        id serial PRIMARY KEY,
+        type_id integer REFERENCES award_types(id) ON DELETE CASCADE NOT NULL,
+        user_id integer REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+        name varchar(64) NOT NULL,
+        email varchar(64) NOT NULL,
+        time time NOT NULL,
+        date date NOT NULL
+      );
+    `);
+
+    //seed database
+    var user = await client.query(
+      "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
+      [
+        faker.name.findName(),
+        faker.name.findName(),
+        "admin@admin.com",
+        "password"
+      ]
+    );
+    await client.query("INSERT INTO award_types VALUES(DEFAULT, ($1))",[("Week")]);
+    var type = await client.query("INSERT INTO award_types VALUES(DEFAULT, ($1)) RETURNING id",[("Month")]);
+    await client.query(
+      "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
+      [
+        type.rows[0].id,
+        user.rows[0].id,
+        faker.name.findName(),
+        faker.internet.email(),
+        "13:45",
+        faker.date.past()
+      ]
+    );
+
+    res.render("pages/user/reset");
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
   }
 });
 
