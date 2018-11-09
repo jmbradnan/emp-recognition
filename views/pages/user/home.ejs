@@ -1,8 +1,19 @@
 <% include ../../partials/header %>
+<nav class="navbar navbar-light bg-light">
+  <a class="navbar-brand" href="/user/home">Employee Recognition App</a>
+  <a class="btn btn-secondary" href="/user/logout">Logout</a>
+</nav>
 
 <h1 class="text-center">Home</h1>
 <form action="/user/award/create" method="post" class="border rounded">
   <legend>Create Employee Award</legend>
+  <div class="form-group">
+    <label for="type_id">Employee of the</label>
+    <select class="form-control" name="type_id">
+      <option value="1">1</option>
+      <option value="2">2</option>
+    </select>
+  </div>
   <div class="form-group">
     <label for="name">Name</label>
     <input type="text" class="form-control" name="name" required>
