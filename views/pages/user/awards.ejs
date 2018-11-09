@@ -15,6 +15,7 @@
       <th scope="col">Email</th>
       <th scope="col">Time</th>
       <th scope="col">Date</th>
+      <th scope="col">Delete</th>
     </tr>
   </thead>
   <tbody>
@@ -27,6 +28,12 @@
         <td><%= awards[i].email %></td>
         <td><%= moment(awards[i].time, 'HH:mm:ss').format('h:mm A') %></td>
         <td><%= awards[i].date.toLocaleDateString("en-US") %></td>
+        <td>
+          <form action="/user/award/delete" method="post">
+            <input type="hidden" name="id" value="<%= awards[i].id %>">
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </td>
       </tr>
     <% } %>
   </tbody>

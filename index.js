@@ -75,8 +75,16 @@ app.post(
 );
 
 //user homepage
-app.get("/user/home", ensureLoggedIn("/user/login"), function(req, res) {
-  res.render("pages/user/home");
+app.get("/user/home", ensureLoggedIn("/user/login"), async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query("SELECT * FROM award_types");
+    const award_types = { award_types: result ? result.rows : null };
+    res.render("pages/user/home", award_types);
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
 });
 
 //user logout
@@ -123,6 +131,18 @@ app.get("/user/awards", ensureLoggedIn("/user/login"), async (req, res) => {
   }
 });
 
+//delete award
+app.post("/user/award/delete", ensureLoggedIn("/user/login"), async (req, res) => {
+  try {
+    const client = await pool.connect();
+    await client.query("DELETE FROM awards WHERE id=($1)",[req.body.id]);
+    res.redirect("/user/awards");
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
+});
 
 /*
  * Admin Routes
