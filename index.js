@@ -6,10 +6,11 @@ require("dotenv").config();
 
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: process.env.DATABASE_URL
+  //ssl: true
 });
 
+//require modules
 const http = require("http");
 var moment = require("moment");
 var express = require("express");
@@ -17,8 +18,10 @@ const path = require("path");
 var bodyParser = require("body-parser");
 var faker = require("faker");
 var moment = require("moment");
-var ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn;
+var engine = require("ejs-mate");
 
+//set up passport
+var ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn;
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const postgresLocal = require("./lib/passport-local-postgres")(pool);
@@ -28,9 +31,11 @@ passport.use(
 passport.serializeUser(postgresLocal.serializeUser);
 passport.deserializeUser(postgresLocal.deserializeUser);
 
+//express configuration
 var app = express();
 app.set("port", process.env.PORT || 5000);
 app.use(express.static(__dirname + "/public"));
+app.engine('ejs', engine);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(require("morgan")("tiny"));
@@ -55,7 +60,7 @@ app.locals.moment = moment;
 app.get("/user/login", async (req, res) => {
   try {
     if (req.user === undefined) {
-      res.render("pages/user/login");
+      res.render("pages/user/login", {user: null});
     } else {
       res.redirect("/user/home");
     }
@@ -77,10 +82,11 @@ app.post(
 //user homepage
 app.get("/user/home", ensureLoggedIn("/user/login"), async (req, res) => {
   try {
+    app.locals.user = req.user;
     const client = await pool.connect();
     const result = await client.query("SELECT * FROM award_types");
-    const award_types = { award_types: result ? result.rows : null };
-    res.render("pages/user/home", award_types);
+    const data = { award_types: result ? result.rows : null, user: req.user };
+    res.render("pages/user/home", data);
   } catch (err) {
     console.error(err);
     res.send("Error: " + err);
@@ -122,8 +128,8 @@ app.get("/user/awards", ensureLoggedIn("/user/login"), async (req, res) => {
       FROM awards JOIN award_types ON awards.type_id = award_types.id
       JOIN users ON awards.user_id = users.id
     `);
-    const awards = { awards: result ? result.rows : null };
-    res.render("pages/user/awards", awards);
+    const data = { awards: result ? result.rows : null, user: req.user };
+    res.render("pages/user/awards", data);
     client.release();
   } catch (err) {
     console.error(err);
@@ -143,6 +149,9 @@ app.post("/user/award/delete", ensureLoggedIn("/user/login"), async (req, res) =
     res.send("Error: " + err);
   }
 });
+
+//update user name
+
 
 /*
  * Admin Routes
@@ -325,7 +334,7 @@ app.get("/reset", async (req, res) => {
       ]
     );
 
-    res.render("pages/user/reset");
+    res.render("reset");
     client.release();
   } catch (err) {
     console.error(err);
