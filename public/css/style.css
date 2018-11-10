@@ -7,6 +7,11 @@
   style.css for employee recognition app
 */
 
+iframe {
+margin-top: 30px;
+
+}
+
 .starthidden {
     display:none;
 }
@@ -16,6 +21,16 @@
     font-size: 200%;
 }
 
+.nav > li {
+	text-align: center;
+	font-variant: small-caps;
+}
+
+.highlighted {
+	background: #d1d1e0;
+}
+
+/* signature pad styling */
 .wrapper {
   position: relative;
   width: 200px;
