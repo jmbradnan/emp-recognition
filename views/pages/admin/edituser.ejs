@@ -2,70 +2,18 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Administration Page</title>
+	<title>New User</title>
     <link rel="stylesheet" href="/css/style.css" type="text/css">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
 
 </head>
 
 <body>
 
-	<!-- Initial Page Actions -->
-	<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-  	<a class="navbar-brand" href="#">Employee Recognition</a>
-		<div class="nav navbar-nav container-fluid">
-			<li class="nav id="allUsersNavigation" onclick="showUsers()">All Users</li>
-			<li class="nav id="newUserNavigation" onclick="createNewUser()">New User</li>
-			<li class="nav id="editUserNavigation" onclick="displayUserList()">Edit User</li>
-			<li class="nav id="reportsNavigation" onclick="reportsDisplay()">Reporting</li>
-			<li class="nav id="searchNavigation" onclick="searchForUser()">Search</li>
-		</div>
-		</div>
-	</nav>
-	<br>
-	<br>
-
-
-<script>
-
-function getDocHeight(doc) {
-    doc = doc || document;
-    // stackoverflow.com/questions/1145850/
-    var body = doc.body, html = doc.documentElement;
-    var height = Math.max( body.scrollHeight, body.offsetHeight, 
-        html.clientHeight, html.scrollHeight, html.offsetHeight );
-    return height;
-}
-
-function setIframeHeight(id) {
-    var ifrm = document.getElementById(id);
-    var doc = ifrm.contentDocument? ifrm.contentDocument: 
-        ifrm.contentWindow.document;
-    ifrm.style.visibility = 'hidden';
-    ifrm.style.height = "10px"; // reset to minimal height ...
-    // IE opt. for bing/msn needs a bit added or scrollbar appears
-    ifrm.style.height = getDocHeight( doc ) + 4 + "px";
-    ifrm.style.visibility = 'visible';
-}
-
-
-
-</script>
-<!-- Content Area 
-https://www.dyn-web.com/tutorials/iframes/height/
--->
-<div class="container">
- 	<iframe id="admin_content-area" frameBorder="0" marginheight="50" class="embed-responsive-item"  width="500" onload="setIframeHeight(this.id)"></iframe> 
-</div>
-
-
-
-	
 	<!-- Edit User -->
 	<fieldset class="starthidden" id="editable_user_fields">
 	<div class="container">
-		<h5>New User Information</h5>
+		<h5>Edit User Information</h5>
 		<form method="post" class="form-horizontal" id="editUserForm" action="/update-user">
 		<!-- First Name -->
 		<div class="form-group">
@@ -124,7 +72,7 @@ https://www.dyn-web.com/tutorials/iframes/height/
 
 <!-- Select Existing User -->
 <div class="container">
-	<fieldset class="starthidden" id="select_user">
+	<fieldset id="select_user">
 		<h5>Select a User to Edit</h5>
           <ul style="list-style-type:none">
             <% results.forEach(function(r) { %>
@@ -138,25 +86,11 @@ https://www.dyn-web.com/tutorials/iframes/height/
 </div>
 
 
-	<!-- Show Available Reports -->
-	<fieldset class="starthidden" id="reports_fields">
-	<div class="container">
-	<h5>Available Reports</h5>
-
-	</fieldset?
 	</div>
 
+	<div class="container" height=200>
 
-	<!-- Search For User -->
-	<fieldset class="starthidden" id="search_for_user">
-		<div class="form-group" id="search_controls">
-			<h5>Type in name of user to search for...</h5>
-			<label class="col-sm-2 control-label">Name: <input type="text" class="input-field" id="name_search" required></label >
-    <input type="button" id="search_btn" value="search" onclick="searchForUser()">
-    </div>
-</fieldset>
-
-</div>
+	</div>
 	
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
@@ -164,9 +98,7 @@ https://www.dyn-web.com/tutorials/iframes/height/
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 	<script src="/js/common.js"></script>
-	<script src="/js/administration.js"></script>
-
-
+	<script src="/js/edituser.js"></script>
 
 </body>
 </html>
