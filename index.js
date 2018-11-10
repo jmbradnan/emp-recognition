@@ -35,7 +35,7 @@ passport.deserializeUser(postgresLocal.deserializeUser);
 var app = express();
 app.set("port", process.env.PORT || 5000);
 app.use(express.static(__dirname + "/public"));
-app.engine('ejs', engine);
+app.engine("ejs", engine);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(require("morgan")("tiny"));
@@ -60,7 +60,7 @@ app.locals.moment = moment;
 app.get("/user/login", async (req, res) => {
   try {
     if (req.user === undefined) {
-      res.render("pages/user/login", {user: null});
+      res.render("pages/user/login", { user: null });
     } else {
       res.redirect("/user/home");
     }
@@ -108,7 +108,14 @@ app.post(
       const client = await pool.connect();
       await client.query(
         "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
-        [req.body.type_id, req.user.id, req.body.name, req.body.email, req.body.time, req.body.date]
+        [
+          req.body.type_id,
+          req.user.id,
+          req.body.name,
+          req.body.email,
+          req.body.time,
+          req.body.date
+        ]
       );
       res.redirect("/user/awards");
       client.release();
@@ -138,20 +145,23 @@ app.get("/user/awards", ensureLoggedIn("/user/login"), async (req, res) => {
 });
 
 //delete award
-app.post("/user/award/delete", ensureLoggedIn("/user/login"), async (req, res) => {
-  try {
-    const client = await pool.connect();
-    await client.query("DELETE FROM awards WHERE id=($1)",[req.body.id]);
-    res.redirect("/user/awards");
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("Error: " + err);
+app.post(
+  "/user/award/delete",
+  ensureLoggedIn("/user/login"),
+  async (req, res) => {
+    try {
+      const client = await pool.connect();
+      await client.query("DELETE FROM awards WHERE id=($1)", [req.body.id]);
+      res.redirect("/user/awards");
+      client.release();
+    } catch (err) {
+      console.error(err);
+      res.send("Error: " + err);
+    }
   }
-});
+);
 
 //update user name
-
 
 /*
  * Admin Routes
@@ -320,8 +330,13 @@ app.get("/reset", async (req, res) => {
         "password"
       ]
     );
-    await client.query("INSERT INTO award_types VALUES(DEFAULT, ($1))",[("Week")]);
-    var type = await client.query("INSERT INTO award_types VALUES(DEFAULT, ($1)) RETURNING id",[("Month")]);
+    await client.query("INSERT INTO award_types VALUES(DEFAULT, ($1))", [
+      "Week"
+    ]);
+    var type = await client.query(
+      "INSERT INTO award_types VALUES(DEFAULT, ($1)) RETURNING id",
+      ["Month"]
+    );
     await client.query(
       "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
       [
