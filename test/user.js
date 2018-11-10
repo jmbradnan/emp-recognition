@@ -1,3 +1,4 @@
+var assert = require("assert");
 const Browser = require("zombie");
 var faker = require("faker");
 Browser.localhost("example.com", 5000);
@@ -36,8 +37,8 @@ describe("User", function() {
 
     before(function(done) {
       browser.select("select[name=type_id]", "Week");
-      browser.fill("input[name=name]", faker.name.findName());
-      browser.fill("input[name=email]", faker.internet.email());
+      browser.fill("input[name=name]", "Tester Name");
+      browser.fill("input[name=email]", "test@email.com");
       browser.fill("input[name=time]", "13:45");
       browser.fill("input[name=date]", "5/01/2018");
       browser.pressButton("Submit", done);
@@ -52,7 +53,59 @@ describe("User", function() {
     });
 
     it("assert text", function() {
+      browser.assert.text("tr:last-child td:nth-child(2)", "Week");
+      browser.assert.text("tr:last-child td:nth-child(3)", "admin@admin.com");
+      browser.assert.text("tr:last-child td:nth-child(4)", "Tester Name");
+      browser.assert.text("tr:last-child td:nth-child(5)", "test@email.com");
+      browser.assert.text("tr:last-child td:nth-child(6)", "1:45 PM");
       browser.assert.text("tr:last-child td:nth-child(7)", "5/1/2018");
+    });
+  });
+
+  describe("can delete an award", function() {
+    before(function(done) {
+      browser.visit("/user/awards", done);
+    });
+
+    before(function(done) {
+      browser.pressButton("tr:last-child button", done);
+    });
+
+    it("should be successful", function() {
+      browser.assert.success();
+    });
+
+    it("should be on the awards page", function() {
+      browser.assert.url({ pathname: "/user/awards" });
+    });
+
+    it("award should be deleted", function() {
+      assert.notEqual(
+        browser.text("tr:last-child td:nth-child(5)"),
+        "test@email.com"
+      );
+    });
+  });
+
+  describe("can logout", function() {
+    before(function(done) {
+      browser.visit("/user/awards", done);
+    });
+
+    before(function(done) {
+      browser.clickLink("Logout", done);
+    });
+
+    before(function(done) {
+      browser.visit("/user/awards", done);
+    });
+
+    it("should be successful", function() {
+      browser.assert.success();
+    });
+
+    it("should be on the login page", function() {
+      browser.assert.url({ pathname: "/user/login" });
     });
   });
 });

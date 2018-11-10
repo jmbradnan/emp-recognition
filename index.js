@@ -161,8 +161,6 @@ app.post(
   }
 );
 
-//update user name
-
 /*
  * Admin Routes
  */
