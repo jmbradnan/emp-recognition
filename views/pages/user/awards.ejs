@@ -1,8 +1,4 @@
-<% include ../../partials/header %>
-<nav class="navbar navbar-light bg-light">
-  <a class="navbar-brand" href="/user/home">Employee Recognition App</a>
-  <a class="btn btn-secondary" href="/user/logout">Logout</a>
-</nav>
+<% layout('pages/user/layout') -%>
 
 <h1 class="text-center">Awards</h1>
 <table class="table">
@@ -38,6 +34,3 @@
     <% } %>
   </tbody>
 </table>
-
-<% include ../../partials/footer %>
-

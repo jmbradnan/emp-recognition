@@ -1,7 +1,4 @@
-<% include ../../partials/header %>
-<nav class="navbar navbar-light bg-light">
-  <a class="navbar-brand" href="/user/home">Employee Recognition App</a>
-</nav>
+<% layout('pages/user/layout') -%>
 
 <form action="/user/login/validate" method="POST">
   <legend>Log In</legend>
@@ -15,5 +12,3 @@
   </div>
   <button type="submit" class="btn btn-primary d-block mx-auto">Submit</button>
 </form>
-
-<% include ../../partials/footer %>
