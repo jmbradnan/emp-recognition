@@ -188,7 +188,7 @@ app.get("/displayusers", async (req, res) => {
     const data = { jsonData: queryResult ? queryResult.rows : null };
     const results = data.jsonData;
     console.log(results);
-    res.render("pages/admin/displayusers", {'results': results });
+    res.render("pages/admin/displayusers", { results: results });
     client.release();
   } catch (err) {
     console.error(err);
@@ -211,7 +211,7 @@ app.get("/edituser", async (req, res) => {
 
 app.get("/createuser", async (req, res) => {
   try {
-    res.render('pages/admin/createuser');
+    res.render("pages/admin/createuser");
   } catch (err) {
     console.error(err);
     res.send("error " + err);
@@ -220,7 +220,7 @@ app.get("/createuser", async (req, res) => {
 
 app.get("/reports", async (req, res) => {
   try {
-    res.render('pages/admin/reports');
+    res.render("pages/admin/reports");
   } catch (err) {
     console.error(err);
     res.send("error " + err);
@@ -229,7 +229,7 @@ app.get("/reports", async (req, res) => {
 
 app.get("/search", async (req, res) => {
   try {
-    res.render('pages/admin/search');
+    res.render("pages/admin/search");
   } catch (err) {
     console.error(err);
     res.send("error " + err);
@@ -270,17 +270,18 @@ app.get("/delete-user", async (req, res) => {
 
 // update user info
 app.post("/update-user", function(req, res) {
-    var data =       [
-        req.body.id,
-        req.body.fname,
-        req.body.lname,
-        req.body.email,
-        req.body.password,
-        req.body.signature
-      ];
-    console.log(data);
-    var sql = "UPDATE users SET fname=($2), lname=($3), email=($4), password=($5), signature=($6) WHERE id=($1)";
-    pool.query(sql, data, function(err, result) {
+  var data = [
+    req.body.id,
+    req.body.fname,
+    req.body.lname,
+    req.body.email,
+    req.body.password,
+    req.body.signature
+  ];
+  console.log(data);
+  var sql =
+    "UPDATE users SET fname=($2), lname=($3), email=($4), password=($5), signature=($6) WHERE id=($1)";
+  pool.query(sql, data, function(err, result) {
     if (err) {
       console.error(err);
     }
