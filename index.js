@@ -283,10 +283,11 @@ app.get("/reset", async (req, res) => {
     await client.query(`
       CREATE TABLE users (
         id serial PRIMARY KEY,
-        fname varchar(64) NOT NULL,
-        lname varchar(64) NOT NULL,
-        email varchar(64) NOT NULL,
-        password varchar(64) NOT NULL
+        fname text NOT NULL,
+        lname text NOT NULL,
+        email text NOT NULL,
+        password text NOT NULL, 
+        signature text
       );
     `);
     await client.query(`
