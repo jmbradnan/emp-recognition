@@ -5,9 +5,6 @@ function awardsCreated() {
     fetch(url).then(function(response) {
     if(response.ok) {
       response.json().then(function(json) {
-        // var data = json;
-        console.log(json);
-        // showReport(data);
         getChartData(json);
       });
     } else {
@@ -22,7 +19,6 @@ function getChartData(json) {
     showFields('#report_area')
     data.addColumn('string', 'Name');
     data.addColumn('number', 'count');
-
 
     var size = Object.keys(json).length;
     var awardsCount = {};
@@ -51,7 +47,7 @@ function getChartData(json) {
                 if (table.length === keys.length) {
                     data.addRows(table);
                     // Set chart options
-                    var options = {'title':'Users that made awards',
+                    var options = {'title':'Who is making awards',
                        'width':400,
                        'height':300};
 
@@ -68,16 +64,4 @@ function getChartData(json) {
     
 }
 
-// function showReport(data) {
-//      var report = $("#report");
-//      var size = Object.keys(data).length;
-//      report.append(li);
-//      console.log(size);
-//      for (i=0; i<data.length; i++) {
-//          console.log(data[i]['user_id']);
-//          li = '<li>'+ "User: " + data[i]['user_id'] + '</li>';
-//          report.append(li);
-//      }
-//      showFields('#report_area')
-// }
 
