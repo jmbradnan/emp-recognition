@@ -45,7 +45,7 @@ function setIframeHeight(id) {
     ifrm.style.visibility = 'hidden';
     ifrm.style.height = "10px"; // reset to minimal height ...
     // IE opt. for bing/msn needs a bit added or scrollbar appears
-    ifrm.style.height = getDocHeight( doc ) + 4 + "px";
+    ifrm.style.height = getDocHeight( doc ) + 400 + "px";
     ifrm.style.visibility = 'visible';
 }
 
@@ -60,91 +60,6 @@ https://www.dyn-web.com/tutorials/iframes/height/
 </div>
 
 
-
-	
-	<!-- Edit User -->
-	<fieldset class="starthidden" id="editable_user_fields">
-	<div class="container">
-		<h5>New User Information</h5>
-		<form method="post" class="form-horizontal" id="editUserForm" action="/update-user">
-		<!-- First Name -->
-		<div class="form-group">
-			<label for="user_fname_edit" class="col-sm-2 control-label">First Name</label>
-			<div class="col-sm-10">
-				<input id="user_fname_edit" type="text" class="form-control input-field" name="fname" placeholder="First Name" required>
-			</div>
-		</div>
-		<!-- Last Name -->
-		<div class="form-group">
-			<label for="user_lname_edit" class="col-sm-2 control-label">Last Name</label>
-			<div class="col-sm-10">
-				<input id="user_lname_edit" type="text" class="form-control input-field" name="lname" placeholder="Last Name" required>
-			</div>
-		</div>
-		<!-- Email -->
-		<div class="form-group">
-			<label for="user_email_edit" class="col-sm-2 control-label">Email</label>
-			<div class="col-sm-10">
-				<input id="user_email_edit" type="email" class="form-control input-field" name="email" placeholder="Email" required>
-			</div>
-		</div>
-		<!-- Password -->
-		<div class="form-group">
-			<label for="user_password_edit" class="col-sm-2 control-label">Password</label>
-			<div class="col-sm-10">
-				<input id="user_password_edit" type="password" class="form-control input-field" name="password" placeholder="Password" required>
-			</div>
-		</div>
-		<!-- Signature -->
-		<div class="form-group">
-		<label for="signature_img" class="col-sm-2 control-label">Signature</label>
-		<img id="signature_image">
-		</div>
-
-		<input type="button" class="col-sm-2" id="signature_edits_btn" value="Change Signature" onclick="updateSignature()">
-		<input type="button" class="col-sm-2" id="delete_user_edits_btn" value="Delete User" onclick="deleteUser()"><br><br>
-	  	<input type="submit" class="col-sm-2" name="Update User" value="Update User">
-
-	  <!-- Hidden Fields -->
-	  <input type="text" style="visibility:hidden" id="user_id_edit" name="id">
-	  <input type="text" style="visibility:hidden" class="input-field" name="signature" id="user_signature_edit">
-	</div>
-	</form>
-	  
-  </fieldset>
-
-  <!-- Update Signature -->
-  <fieldset class="starthidden" id="editable_user_signature">
-    <div class="wrapper">
-      <canvas id="signature-pad2" class="signature-pad" width=400 height=200></canvas>
-    </div>
-    <button id="save-png">Save as PNG</button>
-	<button id="clear">Clear</button>
-  </fieldset>
-
-<!-- Select Existing User -->
-<div class="container">
-	<fieldset class="starthidden" id="select_user">
-		<h5>Select a User to Edit</h5>
-          <ul style="list-style-type:none">
-            <% results.forEach(function(r) { %>
-              <li>
-              <input type="radio" name="selected_user" value=<%= r.id %> onclick="editUser()">
-              <%= r.fname %>, <%=r.lname %>
-              </li>
-            <% }); %>
-          </ul>
-	</fieldset>
-</div>
-
-
-	<!-- Show Available Reports -->
-	<fieldset class="starthidden" id="reports_fields">
-	<div class="container">
-	<h5>Available Reports</h5>
-
-	</fieldset?
-	</div>
 
 
 	<!-- Search For User -->

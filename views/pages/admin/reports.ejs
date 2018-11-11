@@ -10,8 +10,23 @@
 
 <body>
 
-NYI
-	</div>
+	<!-- Show Available Reports -->
+	<fieldset id="reports_fields">
+		<div class="container">
+		<h5>Available Reports</h5>
+
+		<input type="radio" name="created_reports" onclick="awardsCreated()">  Users that created awards</input>
+
+		</div>
+	</fieldset>
+
+	<!-- Report Area -->
+	<fieldset class="starthidden" id="report_area">
+		<div id="report">Report Area
+
+    	</div>
+	</fieldset>
+
 
 	<div class="container" height=200>
 
@@ -22,8 +37,13 @@ NYI
 	<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
 	<script src="/js/common.js"></script>
 	<script src="/js/reports.js"></script>
+	  <script type="text/javascript">
+    google.charts.load('current', {packages: ['corechart']});
+	</script>
 
 </body>
 </html>
