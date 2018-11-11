@@ -6,8 +6,8 @@ require("dotenv").config();
 
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: process.env.DATABASE_URL
+  //ssl: true
 });
 
 //require modules
@@ -160,6 +160,20 @@ app.post(
     }
   }
 );
+
+//show change name form
+app.get("/user/name", ensureLoggedIn("/user/login"), async (req, res) =>{
+  try {
+      const client = await pool.connect();
+      var result = await client.query("SELECT * FROM users WHERE id=($1)", [req.user.id]);
+      const data = {user: result ? result.rows[0] : null}
+      res.render("pages/user/name", data);
+      client.release();
+    } catch (err) {
+      console.error(err);
+      res.send("Error: " + err);
+    }
+});
 
 /*
  * Admin Routes
@@ -381,8 +395,8 @@ app.get("/reset", async (req, res) => {
     var user = await client.query(
       "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
       [
-        faker.name.findName(),
-        faker.name.findName(),
+        faker.name.firstName(),
+        faker.name.lastName(),
         "admin@admin.com",
         "password"
       ]

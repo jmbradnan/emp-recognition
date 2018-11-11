@@ -1,36 +1,38 @@
 <% layout('pages/user/layout') -%>
 
 <h1 class="text-center">Awards</h1>
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Type</th>
-      <th scope="col">User</th>
-      <th scope="col">Name</th>
-      <th scope="col">Email</th>
-      <th scope="col">Time</th>
-      <th scope="col">Date</th>
-      <th scope="col">Delete</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% for(var i=0; i<awards.length; i++) {%>
-       <tr>
-        <th scope="row"><%= awards[i].id %></th>
-        <td><%= awards[i].type %></td>
-        <td><%= awards[i].user %></td>
-        <td><%= awards[i].name %></td>
-        <td><%= awards[i].email %></td>
-        <td><%= moment(awards[i].time, 'HH:mm:ss').format('h:mm A') %></td>
-        <td><%= awards[i].date.toLocaleDateString("en-US") %></td>
-        <td>
-          <form action="/user/award/delete" method="post">
-            <input type="hidden" name="id" value="<%= awards[i].id %>">
-            <button type="submit" class="btn btn-danger">Delete</button>
-          </form>
-        </td>
+<div class="table-responsive card">
+  <table class="table table-sm table-hover card-body">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Type</th>
+        <th scope="col">User</th>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Time</th>
+        <th scope="col">Date</th>
+        <th scope="col">Delete</th>
       </tr>
-    <% } %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% for(var i=0; i<awards.length; i++) {%>
+         <tr>
+          <th scope="row"><%= awards[i].id %></th>
+          <td><%= awards[i].type %></td>
+          <td><%= awards[i].user %></td>
+          <td><%= awards[i].name %></td>
+          <td><%= awards[i].email %></td>
+          <td><%= moment(awards[i].time, 'HH:mm:ss').format('h:mm A') %></td>
+          <td><%= awards[i].date.toLocaleDateString("en-US") %></td>
+          <td>
+            <form action="/user/award/delete" method="post">
+              <input type="hidden" name="id" value="<%= awards[i].id %>">
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
