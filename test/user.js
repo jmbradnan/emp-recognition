@@ -87,6 +87,31 @@ describe("User", function() {
     });
   });
 
+  describe("can change name", function() {
+    before(function(done) {
+      browser.visit("/user/name", done);
+    });
+
+    before(function(done) {
+      browser.fill("input[name=fname]", "new_first_name");
+      browser.fill("input[name=lname]", "new_last_name");
+      browser.pressButton("Change Name", done);
+    });
+
+    it("should be successful", function() {
+      browser.assert.success();
+    });
+
+    it("should be on the name page", function() {
+      browser.assert.url({ pathname: "/user/name" });
+    });
+
+    it("name should be updated", function() {
+      browser.assert.input("input[name=fname]", "new_first_name");
+      browser.assert.input("input[name=lname]", "new_last_name");
+    });
+  });
+
   describe("can logout", function() {
     before(function(done) {
       browser.visit("/user/awards", done);
