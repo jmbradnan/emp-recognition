@@ -5,10 +5,16 @@
 require("dotenv").config();
 
 const { Pool } = require("pg");
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
-});
+// const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: true
+// });
+
+ const pool = new Pool({
+   connectionString: "postgres://dev:ABC123@localhost/postgres",
+   ssl: false
+ });
+
 
 //require modules
 const http = require("http");
@@ -165,15 +171,16 @@ app.post(
  * Admin Routes
  */
 
-// Show abbreviated list (names) of all users
-app.get("/show-all-users", async (req, res) => {
+app.get("/awardsCreatedReport", async (req, res) => {
   try {
     const client = await pool.connect();
-    const queryResult = await client.query("SELECT * FROM users");
+    const queryResult = await client.query(`      
+      SELECT user_id
+      FROM awards
+      `);
     const results = { jsonData: queryResult ? queryResult.rows : null };
-    // res.send(results.jsonData);
-    // const results = { results: result ? result.rows : null };
-    res.render("pages/administration", results);
+    console.log(results);
+    res.send(results.jsonData);
     client.release();
   } catch (err) {
     console.error(err);
