@@ -181,7 +181,10 @@ app.get("/user/name", ensureLoggedIn("/user/login"), async (req, res) => {
 app.post("/user/name/edit", ensureLoggedIn("/user/login"), async (req, res) => {
   try {
     const client = await pool.connect();
-    await client.query("UPDATE users SET fname=($1), lname=($2) WHERE id=($3)", [req.body.fname, req.body.lname, req.user.id]);
+    await client.query(
+      "UPDATE users SET fname=($1), lname=($2) WHERE id=($3)",
+      [req.body.fname, req.body.lname, req.user.id]
+    );
     res.redirect("/user/name");
     client.release();
   } catch (err) {
