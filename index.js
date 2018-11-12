@@ -399,7 +399,7 @@ app.get("/reset", async (req, res) => {
         email text NOT NULL,
         password text NOT NULL,
         signature text,
-        administrator bool
+        administrator bool NOT NULL DEFAULT FALSE
       );
     `);
     await client.query(`

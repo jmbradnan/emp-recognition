@@ -6,7 +6,6 @@ document.getElementById('administratorCheck').addEventListener('change', functio
     var state = document.getElementById('administratorCheck').checked;
     var newState = state ? 'true' : 'false';
     document.getElementById('administrator_check').value = newState
-  
 });
 
 
