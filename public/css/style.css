@@ -21,6 +21,15 @@ margin-top: 30px;
     font-size: 200%;
 }
 
+input[type="checkbox"] {
+   vertical-align:middle;
+}
+
+label,input{
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .nav > li {
 	text-align: center;
 	font-variant: small-caps;
