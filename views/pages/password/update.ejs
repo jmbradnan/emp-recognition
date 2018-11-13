@@ -1,0 +1,16 @@
+<% layout('pages/layout') -%>
+
+<h1 class="text-center">Update Password</h1>
+<div class="card">
+  <form action="/password/update" method="post" class="card-body">
+    <input type="hidden" name="email" value="<%= req.query.email %>">
+    <input type="hidden" name="reset_token" value="<%= req.query.reset_token %>">
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" name="password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary d-block mx-auto">Update Password</button>
+  </form>
+</div>
+
+

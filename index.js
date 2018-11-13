@@ -6,8 +6,8 @@ require("dotenv").config();
 
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: process.env.DATABASE_URL
+  //ssl: true
 });
 
 //require modules
@@ -19,6 +19,10 @@ var bodyParser = require("body-parser");
 var faker = require("faker");
 var moment = require("moment");
 var engine = require("ejs-mate");
+var crypto = require("crypto");
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 
 //set up passport
 var ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn;
@@ -193,6 +197,8 @@ app.post("/user/name/edit", ensureLoggedIn("/user/login"), async (req, res) => {
   }
 });
 
+
+
 /*
  * Admin Routes
  */
@@ -200,7 +206,7 @@ app.post("/user/name/edit", ensureLoggedIn("/user/login"), async (req, res) => {
 app.get("/awardsCreatedReport", async (req, res) => {
   try {
     const client = await pool.connect();
-    const queryResult = await client.query(`      
+    const queryResult = await client.query(`
       SELECT user_id
       FROM awards
       `);
@@ -371,6 +377,77 @@ app.get("/", async (req, res) => {
   }
 });
 
+//show password reset form
+app.get("/password", async (req, res) => {
+  try {
+    res.render("pages/password", {user: null, alert: req.query.alert});
+  } catch (err) {
+    console.error(err);
+    res.send("error " + err);
+  }
+});
+
+//send reset pasword email
+app.post("/password/reset", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    var result = await client.query("SELECT * FROM users WHERE email=($1)", [req.body.email]);
+    if (result.rows.length) {
+      reset_token = crypto.randomBytes(4).toString('hex');
+      await client.query(
+        "UPDATE users SET reset_token=($1) WHERE email=($2)",
+        [reset_token, req.body.email]
+      );
+      const msg = {
+        to: req.body.email,
+        from: 'employee-recognition-app@heroku.com',
+        subject: 'Reset Password',
+        html: `
+        <p>Hello ${result.rows[0].fname} ${result.rows[0].lname},</p>
+        <a href="https://employee-recognition-app.herokuapp.com/password/update?email=${req.body.email}&reset_token=${reset_token}">Click here to update your password</a>
+        <p>Thanks,<br>
+        Employee Recognition App</p>
+        `
+      };
+      sgMail.send(msg);
+    }
+    res.redirect("/password");
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("error " + err);
+  }
+});
+
+//show update password form
+app.get("/password/update", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    var result = await client.query("SELECT * FROM users WHERE email=($1) AND reset_token=($2)", [req.query.email, req.query.reset_token]);
+    if (result.rows.length && req.query.email && req.query.reset_token) {
+      res.render("pages/password/update", {user: null, req: req})
+    } else {
+      res.redirect("/user/login")
+    }
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("error " + err);
+  }
+});
+
+//update password
+app.post("/password/update", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    await client.query("UPDATE users SET reset_token=($1), password=($2) WHERE email=($3) AND reset_token=($4)", [null, req.body.password, req.body.email, req.body.reset_token]);
+    res.redirect("/user/login");
+  } catch (err) {
+    console.error(err);
+    res.send("error " + err);
+  }
+});
+
 //reset and set database
 app.get("/reset", async (req, res) => {
   try {
@@ -395,7 +472,8 @@ app.get("/reset", async (req, res) => {
         lname text NOT NULL,
         email text NOT NULL,
         password text NOT NULL,
-        signature text
+        signature text,
+        reset_token varchar(64)
       );
     `);
     await client.query(`
@@ -439,7 +517,7 @@ app.get("/reset", async (req, res) => {
       ]
     );
 
-    res.render("reset");
+    res.render("pages/reset", {user: null});
     client.release();
   } catch (err) {
     console.error(err);

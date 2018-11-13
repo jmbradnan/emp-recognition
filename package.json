@@ -10,6 +10,7 @@
     "ci": "start-server-and-test http://localhost:5000 test"
   },
   "dependencies": {
+    "@sendgrid/mail": "^6.3.1",
     "body-parser": "^1.18.3",
     "connect-ensure-login": "^0.1.1",
     "connect-flash": "^0.1.1",
