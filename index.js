@@ -329,7 +329,7 @@ app.post("/update-user", function(req, res) {
 // add a new user
 app.post("/new-user", function(req, res) {
   var admin = req.body.administrator;
-  var isAdmin = admin === 'true' ? true : false;
+  var isAdmin = admin === "true" ? true : false;
   var data = [
     req.body.fname,
     req.body.lname,
