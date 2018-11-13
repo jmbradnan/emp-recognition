@@ -328,21 +328,24 @@ app.post("/update-user", function(req, res) {
 
 // add a new user
 app.post("/new-user", function(req, res) {
+  var admin = req.body.administrator;
+  var isAdmin = admin === 'true' ? true : false;
   var data = [
     req.body.fname,
     req.body.lname,
     req.body.email,
     req.body.password,
-    req.body.signature
+    req.body.signature,
+    isAdmin
   ];
   console.log(data);
   var sql =
-    "INSERT INTO users (fname, lname, email, password, signature) VALUES ($1, $2, $3, $4, $5) RETURNING id";
+    "INSERT INTO users (fname, lname, email, password, signature, administrator) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id";
   pool.query(sql, data, function(err, result) {
     if (err) {
       console.error(err);
     }
-    console.log(result.rows[0].id);
+    console.log(result.rows[0].administrator);
   });
   // res.redirect("/administration");
   res.send("user created successfully.");
@@ -479,8 +482,9 @@ app.get("/reset", async (req, res) => {
         lname text NOT NULL,
         email text NOT NULL,
         password text NOT NULL,
+        reset_token varchar(64),
         signature text,
-        reset_token varchar(64)
+        administrator bool NOT NULL DEFAULT FALSE
       );
     `);
     await client.query(`
