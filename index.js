@@ -20,9 +20,8 @@ var faker = require("faker");
 var moment = require("moment");
 var engine = require("ejs-mate");
 var crypto = require("crypto");
-const sgMail = require('@sendgrid/mail');
+const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
 
 //set up passport
 var ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn;
@@ -196,8 +195,6 @@ app.post("/user/name/edit", ensureLoggedIn("/user/login"), async (req, res) => {
     res.send("Error: " + err);
   }
 });
-
-
 
 /*
  * Admin Routes
@@ -380,7 +377,7 @@ app.get("/", async (req, res) => {
 //show password reset form
 app.get("/password", async (req, res) => {
   try {
-    res.render("pages/password", {user: null, alert: req.query.alert});
+    res.render("pages/password", { user: null, alert: req.query.alert });
   } catch (err) {
     console.error(err);
     res.send("error " + err);
@@ -391,20 +388,24 @@ app.get("/password", async (req, res) => {
 app.post("/password/reset", async (req, res) => {
   try {
     const client = await pool.connect();
-    var result = await client.query("SELECT * FROM users WHERE email=($1)", [req.body.email]);
+    var result = await client.query("SELECT * FROM users WHERE email=($1)", [
+      req.body.email
+    ]);
     if (result.rows.length) {
-      reset_token = crypto.randomBytes(4).toString('hex');
-      await client.query(
-        "UPDATE users SET reset_token=($1) WHERE email=($2)",
-        [reset_token, req.body.email]
-      );
+      reset_token = crypto.randomBytes(4).toString("hex");
+      await client.query("UPDATE users SET reset_token=($1) WHERE email=($2)", [
+        reset_token,
+        req.body.email
+      ]);
       const msg = {
         to: req.body.email,
-        from: 'employee-recognition-app@heroku.com',
-        subject: 'Reset Password',
+        from: "employee-recognition-app@heroku.com",
+        subject: "Reset Password",
         html: `
         <p>Hello ${result.rows[0].fname} ${result.rows[0].lname},</p>
-        <a href="https://employee-recognition-app.herokuapp.com/password/update?email=${req.body.email}&reset_token=${reset_token}">Click here to update your password</a>
+        <a href="https://employee-recognition-app.herokuapp.com/password/update?email=${
+          req.body.email
+        }&reset_token=${reset_token}">Click here to update your password</a>
         <p>Thanks,<br>
         Employee Recognition App</p>
         `
@@ -423,11 +424,14 @@ app.post("/password/reset", async (req, res) => {
 app.get("/password/update", async (req, res) => {
   try {
     const client = await pool.connect();
-    var result = await client.query("SELECT * FROM users WHERE email=($1) AND reset_token=($2)", [req.query.email, req.query.reset_token]);
+    var result = await client.query(
+      "SELECT * FROM users WHERE email=($1) AND reset_token=($2)",
+      [req.query.email, req.query.reset_token]
+    );
     if (result.rows.length && req.query.email && req.query.reset_token) {
-      res.render("pages/password/update", {user: null, req: req})
+      res.render("pages/password/update", { user: null, req: req });
     } else {
-      res.redirect("/user/login")
+      res.redirect("/user/login");
     }
     client.release();
   } catch (err) {
@@ -440,7 +444,10 @@ app.get("/password/update", async (req, res) => {
 app.post("/password/update", async (req, res) => {
   try {
     const client = await pool.connect();
-    await client.query("UPDATE users SET reset_token=($1), password=($2) WHERE email=($3) AND reset_token=($4)", [null, req.body.password, req.body.email, req.body.reset_token]);
+    await client.query(
+      "UPDATE users SET reset_token=($1), password=($2) WHERE email=($3) AND reset_token=($4)",
+      [null, req.body.password, req.body.email, req.body.reset_token]
+    );
     res.redirect("/user/login");
   } catch (err) {
     console.error(err);
@@ -517,7 +524,7 @@ app.get("/reset", async (req, res) => {
       ]
     );
 
-    res.render("pages/reset", {user: null});
+    res.render("pages/reset", { user: null });
     client.release();
   } catch (err) {
     console.error(err);
