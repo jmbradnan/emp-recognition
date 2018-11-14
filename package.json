@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "mocha --timeout 10000",
+    "test": "mocha --timeout 50000",
     "start-server": "npm start",
     "ci": "start-server-and-test http://localhost:5000 test"
   },
