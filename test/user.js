@@ -1,7 +1,7 @@
 var assert = require("assert");
 const Browser = require("zombie");
 var faker = require("faker");
-Browser.waitDuration = '30s';
+Browser.waitDuration = '50s';
 Browser.localhost("example.com", 5000);
 
 describe("User", function() {
