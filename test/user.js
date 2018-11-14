@@ -3,14 +3,13 @@ require("dotenv").config();
 var assert = require("assert");
 const Browser = require("zombie");
 var faker = require("faker");
-Browser.waitDuration = '50s';
+Browser.waitDuration = "50s";
 Browser.localhost("example.com", 5000);
 const { Pool } = require("pg");
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
 });
-
 
 describe("User", function() {
   const browser = new Browser();
@@ -144,7 +143,6 @@ describe("User", function() {
   });
 
   describe("can reset password and login", function() {
-    var reset_token;
     before(function(done) {
       browser.visit("/password", done);
     });
@@ -155,11 +153,14 @@ describe("User", function() {
     });
 
     before(function(done) {
-      pool.query('SELECT * FROM users;', (err, res) => {
-        var reset_token = res.rows[0].reset_token
-        browser.visit(`/password/update?email=admin@admin.com&reset_token=${reset_token}`, done);
-        pool.end()
-      })
+      pool.query("SELECT * FROM users;", (err, res) => {
+        var reset_token = res.rows[0].reset_token;
+        browser.visit(
+          `/password/update?email=admin@admin.com&reset_token=${reset_token}`,
+          done
+        );
+        pool.end();
+      });
     });
 
     before(function(done) {
@@ -168,7 +169,7 @@ describe("User", function() {
     });
 
     before(function(done) {
-      browser.fill("input[name=email]", "admin@admin.com")
+      browser.fill("input[name=email]", "admin@admin.com");
       browser.fill("input[name=password]", "newpass");
       browser.pressButton("Submit", done);
     });
