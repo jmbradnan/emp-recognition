@@ -1,8 +1,16 @@
+require("dotenv").config();
+
 var assert = require("assert");
 const Browser = require("zombie");
 var faker = require("faker");
 Browser.waitDuration = '50s';
 Browser.localhost("example.com", 5000);
+const { Pool } = require("pg");
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
+});
+
 
 describe("User", function() {
   const browser = new Browser();
@@ -132,6 +140,45 @@ describe("User", function() {
 
     it("should be on the login page", function() {
       browser.assert.url({ pathname: "/user/login" });
+    });
+  });
+
+  describe("can reset password and login", function() {
+    var reset_token;
+    before(function(done) {
+      browser.visit("/password", done);
+    });
+
+    before(function(done) {
+      browser.fill("input[name=email]", "admin@admin.com");
+      browser.pressButton("Send Reset Password Email", done);
+    });
+
+    before(function(done) {
+      pool.query('SELECT * FROM users;', (err, res) => {
+        var reset_token = res.rows[0].reset_token
+        browser.visit(`/password/update?email=admin@admin.com&reset_token=${reset_token}`, done);
+        pool.end()
+      })
+    });
+
+    before(function(done) {
+      browser.fill("input[name=password]", "newpass");
+      browser.pressButton("Update Password", done);
+    });
+
+    before(function(done) {
+      browser.fill("input[name=email]", "admin@admin.com")
+      browser.fill("input[name=password]", "newpass");
+      browser.pressButton("Submit", done);
+    });
+
+    it("should be successful", function() {
+      browser.assert.success();
+    });
+
+    it("should be on the home page", function() {
+      browser.assert.url({ pathname: "/user/home" });
     });
   });
 });
