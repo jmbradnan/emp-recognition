@@ -1,0 +1,70 @@
+\documentclass[10pt, landscape]{article}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{pagecolor}
+\usepackage{ulem}
+\usepackage{datatool}
+
+\DTLloaddb{names}{namelist.csv}
+
+\definecolor{azure(web)(azuremist)}{rgb}{0.94, 1.0, 1.0}
+\pagestyle{empty}
+
+\begin{document}
+\pagecolor{azure(web)(azuremist)}
+
+\DTLforeach{names}{\name=name, \date=date}
+
+\begin{minipage}[c]{1\textwidth}
+\centerline{
+\fontfamily{ptm}\fontsize{1.2cm}{0.5cm}{\selectfont{\textit{ Employee of the Month }}}}
+\end{minipage}
+
+\vskip2em
+\begin{minipage}[c]{12cm}
+\centering
+\includegraphics[scale=0.125]{ribbon}
+\end{minipage}
+
+%\begin{minipage}[c]{12cm}
+%\centering{
+%\LARGE{\textsl{awarded to}}}
+%\end{minipage}
+
+\vskip2em
+\begin{minipage}[c]{1\textwidth}
+\centerline{
+\fontsize{2.0cm}{1.5cm}{\bfseries{\name}}}
+\end{minipage}
+
+\vskip2em
+\begin{minipage}[c]{12cm}
+\centering{
+\large{\textsl{in recognition of\\
+your dedication, passion, and hard work}}}
+\end{minipage}
+
+\vskip2em
+\begin{minipage}[c]{1\textwidth}
+\centering{
+\LARGE{\textsl{awarded by}}}
+\end{minipage}
+
+\vskip1em
+\begin{minipage}[c]{12cm}
+\centering
+\includegraphics[scale=0.10]{eSig}
+\end{minipage}
+
+\begin{minipage}[c]{1\textwidth}
+\centering
+\fontsize{1.2cm}{0.5cm}{\bfseries{ Jane Smith }}
+\end{minipage}
+
+\vskip2em
+\begin{minipage}[c]{1\textwidth}
+\centering{
+\LARGE{\textsl{given on \date}}}
+\end{minipage}
+
+\end{document}
