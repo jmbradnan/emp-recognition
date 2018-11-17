@@ -84,7 +84,7 @@ app.post("/user/awards/destroy", ensureLoggedIn("/login"), async (req, res) => {
   if (req.user.administrator) res.redirect("/login");
   const client = await pool.connect();
   await client.query("DELETE FROM awards WHERE id=($1)", [req.body.id]);
-  res.redirect("/user/awards");
+  res.redirect("/user/awards/index");
   client.release();
 });
 
@@ -112,7 +112,7 @@ app.post("/user/awards/create", ensureLoggedIn("/login"), async (req, res) => {
       req.body.date
     ]
   );
-  res.redirect("/user/awards");
+  res.redirect("/user/awards/index");
   client.release();
 });
 

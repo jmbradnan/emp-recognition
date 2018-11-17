@@ -34,13 +34,13 @@ describe("User", function() {
     });
 
     it("should see home page", function() {
-      browser.assert.url({ pathname: "/user/home" });
+      browser.assert.url({ pathname: "/user/awards/index" });
     });
   });
 
   describe("can create a new award", function() {
     before(function(done) {
-      browser.visit("/user/home", done);
+      browser.visit("/user/awards/new", done);
     });
 
     before(function(done) {
@@ -57,7 +57,7 @@ describe("User", function() {
     });
 
     it("should be on the awards page", function() {
-      browser.assert.url({ pathname: "/user/awards" });
+      browser.assert.url({ pathname: "/user/awards/index" });
     });
 
     it("assert text", function() {
@@ -72,7 +72,7 @@ describe("User", function() {
 
   describe("can delete an award", function() {
     before(function(done) {
-      browser.visit("/user/awards", done);
+      browser.visit("/user/awards/index", done);
     });
 
     before(function(done) {
@@ -84,7 +84,7 @@ describe("User", function() {
     });
 
     it("should be on the awards page", function() {
-      browser.assert.url({ pathname: "/user/awards" });
+      browser.assert.url({ pathname: "/user/awards/index" });
     });
 
     it("award should be deleted", function() {
@@ -97,7 +97,7 @@ describe("User", function() {
 
   describe("can change name", function() {
     before(function(done) {
-      browser.visit("/user/name", done);
+      browser.visit("/user/name/edit", done);
     });
 
     before(function(done) {
@@ -111,7 +111,7 @@ describe("User", function() {
     });
 
     it("should be on the name page", function() {
-      browser.assert.url({ pathname: "/user/name" });
+      browser.assert.url({ pathname: "/user/name/edit" });
     });
 
     it("name should be updated", function() {
@@ -122,7 +122,7 @@ describe("User", function() {
 
   describe("can logout", function() {
     before(function(done) {
-      browser.visit("/user/awards", done);
+      browser.visit("/user/awards/index", done);
     });
 
     before(function(done) {
@@ -130,7 +130,7 @@ describe("User", function() {
     });
 
     before(function(done) {
-      browser.visit("/user/awards", done);
+      browser.visit("/user/awards/index", done);
     });
 
     it("should be successful", function() {
@@ -138,7 +138,7 @@ describe("User", function() {
     });
 
     it("should be on the login page", function() {
-      browser.assert.url({ pathname: "/user/login" });
+      browser.assert.url({ pathname: "/login" });
     });
   });
 
@@ -156,7 +156,7 @@ describe("User", function() {
       pool.query("SELECT * FROM users;", (err, res) => {
         var reset_token = res.rows[0].reset_token;
         browser.visit(
-          `/password/update?email=admin@admin.com&reset_token=${reset_token}`,
+          `/password/edit?email=admin@admin.com&reset_token=${reset_token}`,
           done
         );
         pool.end();
@@ -179,7 +179,7 @@ describe("User", function() {
     });
 
     it("should be on the home page", function() {
-      browser.assert.url({ pathname: "/user/home" });
+      browser.assert.url({ pathname: "/user/awards/index" });
     });
   });
 });
