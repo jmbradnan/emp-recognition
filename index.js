@@ -6,8 +6,8 @@ require("dotenv").config();
 
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: process.env.DATABASE_URL
+  //ssl: true
 });
 
 //require modules
@@ -58,142 +58,87 @@ app.locals.moment = moment;
 /*
  * User Routes
  */
-
-//user login page
-app.get("/user/login", async (req, res) => {
-  try {
-    if (req.user === undefined) {
-      res.render("pages/user/login", { user: null });
-    } else {
-      res.redirect("/user/home");
-    }
-  } catch (err) {
-    console.error(err);
-    res.send("Error: " + err);
-  }
-});
-
-//user login validation
-app.post(
-  "/user/login/validate",
-  passport.authenticate("local", { failureRedirect: "/user/login" }),
-  function(req, res) {
-    res.redirect("/user/home");
-  }
-);
-
-//user homepage
-app.get("/user/home", ensureLoggedIn("/user/login"), async (req, res) => {
-  try {
-    app.locals.user = req.user;
-    const client = await pool.connect();
-    const result = await client.query("SELECT * FROM award_types");
-    const data = { award_types: result ? result.rows : null, user: req.user };
-    res.render("pages/user/home", data);
-  } catch (err) {
-    console.error(err);
-    res.send("Error: " + err);
-  }
-});
-
 //user logout
-app.get("/user/logout", function(req, res) {
+app.get("/user/logout", ensureLoggedIn("/login"), function(req, res) {
+  if (req.user.administrator) res.redirect("/login");
   req.logout();
-  res.redirect("/user/login");
+  res.redirect("/login");
 });
-
-//create award
-app.post(
-  "/user/award/create",
-  ensureLoggedIn("/user/login"),
-  async (req, res) => {
-    try {
-      const client = await pool.connect();
-      await client.query(
-        "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
-        [
-          req.body.type_id,
-          req.user.id,
-          req.body.name,
-          req.body.email,
-          req.body.time,
-          req.body.date
-        ]
-      );
-      res.redirect("/user/awards");
-      client.release();
-    } catch (err) {
-      console.error(err);
-      res.send("Error: " + err);
-    }
-  }
-);
 
 //show all awards
-app.get("/user/awards", ensureLoggedIn("/user/login"), async (req, res) => {
-  try {
-    const client = await pool.connect();
-    var result = await client.query(`
-      SELECT award_types.name as type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
-      FROM awards JOIN award_types ON awards.type_id = award_types.id
-      JOIN users ON awards.user_id = users.id
-    `);
-    const data = { awards: result ? result.rows : null, user: req.user };
-    res.render("pages/user/awards", data);
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("Error: " + err);
-  }
+app.get("/user/awards/index", ensureLoggedIn("/login"), async (req, res) => {
+  if (req.user.administrator) res.redirect("/login");
+  const client = await pool.connect();
+  var result = await client.query(`
+    SELECT award_types.name as type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
+    FROM awards JOIN award_types ON awards.type_id = award_types.id
+    JOIN users ON awards.user_id = users.id
+  `);
+  const data = { awards: result ? result.rows : null, user: req.user };
+  res.render("pages/user/awards/index", data);
+  client.release();
 });
 
 //delete award
-app.post(
-  "/user/award/delete",
-  ensureLoggedIn("/user/login"),
-  async (req, res) => {
-    try {
-      const client = await pool.connect();
-      await client.query("DELETE FROM awards WHERE id=($1)", [req.body.id]);
-      res.redirect("/user/awards");
-      client.release();
-    } catch (err) {
-      console.error(err);
-      res.send("Error: " + err);
-    }
-  }
-);
+app.post("/user/awards/destroy", ensureLoggedIn("/login"), async (req, res) => {
+  if (req.user.administrator) res.redirect("/login");
+  const client = await pool.connect();
+  await client.query("DELETE FROM awards WHERE id=($1)", [req.body.id]);
+  res.redirect("/user/awards");
+  client.release();
+});
+
+// form for creating a new award
+app.get("/user/awards/new", ensureLoggedIn("/login"), async (req, res) => {
+  if (req.user.administrator) res.redirect("/login");
+  const client = await pool.connect();
+  const result = await client.query("SELECT * FROM award_types");
+  const data = { award_types: result ? result.rows : null, user: req.user };
+  res.render("pages/user/awards/new", data);
+});
+
+//create a new award
+app.post("/user/awards/create", ensureLoggedIn("/login"), async (req, res) => {
+  if (req.user.administrator) res.redirect("/login");
+  const client = await pool.connect();
+  await client.query(
+    "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
+    [
+      req.body.type_id,
+      req.user.id,
+      req.body.name,
+      req.body.email,
+      req.body.time,
+      req.body.date
+    ]
+  );
+  res.redirect("/user/awards");
+  client.release();
+});
 
 //show change name form
-app.get("/user/name", ensureLoggedIn("/user/login"), async (req, res) => {
-  try {
-    const client = await pool.connect();
-    var result = await client.query("SELECT * FROM users WHERE id=($1)", [
-      req.user.id
-    ]);
-    const data = { user: result ? result.rows[0] : null };
-    res.render("pages/user/name", data);
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("Error: " + err);
-  }
+app.get("/user/name/edit", ensureLoggedIn("/login"), async (req, res) => {
+  if (req.user.administrator) res.redirect("/login");
+  const client = await pool.connect();
+  var result = await client.query("SELECT * FROM users WHERE id=($1)", [
+    req.user.id
+  ]);
+  const data = { user: result ? result.rows[0] : null };
+  res.render("pages/user/name/edit", data);
+  client.release();
 });
 
 //change name
-app.post("/user/name/edit", ensureLoggedIn("/user/login"), async (req, res) => {
-  try {
-    const client = await pool.connect();
-    await client.query(
-      "UPDATE users SET fname=($1), lname=($2) WHERE id=($3)",
-      [req.body.fname, req.body.lname, req.user.id]
-    );
-    res.redirect("/user/name");
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("Error: " + err);
-  }
+app.post("/user/name/update", ensureLoggedIn("/login"), async (req, res) => {
+  if (req.user.administrator) res.redirect("/login");
+  const client = await pool.connect();
+  await client.query("UPDATE users SET fname=($1), lname=($2) WHERE id=($3)", [
+    req.body.fname,
+    req.body.lname,
+    req.user.id
+  ]);
+  res.redirect("/user/name/edit");
+  client.release();
 });
 
 /*
@@ -369,93 +314,85 @@ app.get("/administration", async (req, res) => {
  * App routes
  */
 app.get("/", async (req, res) => {
-  try {
-    res.redirect("/user/login");
-  } catch (err) {
-    console.error(err);
-    res.send("error " + err);
+  res.redirect("/login");
+});
+
+//login page
+app.get("/login", async (req, res) => {
+  if (req.user === undefined) {
+    res.render("pages/login", { user: null });
+  } else if (req.user.administrator) {
+    res.redirect("/administration");
+  } else {
+    res.redirect("/user/awards/index");
   }
 });
 
-//show password reset form
+//login validation
+app.post("/login/validate",
+  passport.authenticate("local", { failureRedirect: "/login" }),
+  function(req, res) {
+    res.redirect("/login");
+  }
+);
+
+//show form for creating a reset password token
 app.get("/password", async (req, res) => {
-  try {
-    res.render("pages/password", { user: null, alert: req.query.alert });
-  } catch (err) {
-    console.error(err);
-    res.send("error " + err);
-  }
+  res.render("pages/password", { user: null });
 });
 
-//send reset pasword email
+//create a new reset password token and send email
 app.post("/password/reset", async (req, res) => {
-  try {
-    const client = await pool.connect();
-    var result = await client.query("SELECT * FROM users WHERE email=($1)", [
+  const client = await pool.connect();
+  var result = await client.query("SELECT * FROM users WHERE email=($1)", [
+    req.body.email
+  ]);
+  if (result.rows.length) {
+    reset_token = crypto.randomBytes(4).toString("hex");
+    await client.query("UPDATE users SET reset_token=($1) WHERE email=($2)", [
+      reset_token,
       req.body.email
     ]);
-    if (result.rows.length) {
-      reset_token = crypto.randomBytes(4).toString("hex");
-      await client.query("UPDATE users SET reset_token=($1) WHERE email=($2)", [
-        reset_token,
-        req.body.email
-      ]);
-      const msg = {
-        to: req.body.email,
-        from: "employee-recognition-app@heroku.com",
-        subject: "Reset Password",
-        html: `
-        <p>Hello ${result.rows[0].fname} ${result.rows[0].lname},</p>
-        <a href="https://employee-recognition-app.herokuapp.com/password/update?email=${
-          req.body.email
-        }&reset_token=${reset_token}">Click here to update your password</a>
-        <p>Thanks,<br>
-        Employee Recognition App</p>
-        `
-      };
-      sgMail.send(msg);
-    }
-    res.redirect("/password");
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("error " + err);
+    const msg = {
+      to: req.body.email,
+      from: "employee-recognition-app@heroku.com",
+      subject: "Reset Password",
+      html: `
+      <p>Hello ${result.rows[0].fname} ${result.rows[0].lname},</p>
+      <a href="https://employee-recognition-app.herokuapp.com/password/edit?email=${req.body.email}&reset_token=${reset_token}">Click here to update your password</a>
+      <p>Thanks,<br>
+      Employee Recognition App</p>
+      `
+    };
+    sgMail.send(msg);
   }
+  res.redirect("/login");
+  client.release();
 });
 
 //show update password form
-app.get("/password/update", async (req, res) => {
-  try {
-    const client = await pool.connect();
-    var result = await client.query(
-      "SELECT * FROM users WHERE email=($1) AND reset_token=($2)",
-      [req.query.email, req.query.reset_token]
-    );
-    if (result.rows.length && req.query.email && req.query.reset_token) {
-      res.render("pages/password/update", { user: null, req: req });
-    } else {
-      res.redirect("/user/login");
-    }
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("error " + err);
+app.get("/password/edit", async (req, res) => {
+  const client = await pool.connect();
+  var result = await client.query(
+    "SELECT * FROM users WHERE email=($1) AND reset_token=($2)",
+    [req.query.email, req.query.reset_token]
+  );
+  if (result.rows.length && req.query.email && req.query.reset_token) {
+    res.render("pages/password/edit", { user: null, query: req.query });
+  } else {
+    res.redirect("/login");
   }
+  client.release();
 });
 
 //update password
 app.post("/password/update", async (req, res) => {
-  try {
-    const client = await pool.connect();
-    await client.query(
-      "UPDATE users SET reset_token=($1), password=($2) WHERE email=($3) AND reset_token=($4)",
-      [null, req.body.password, req.body.email, req.body.reset_token]
-    );
-    res.redirect("/user/login");
-  } catch (err) {
-    console.error(err);
-    res.send("error " + err);
-  }
+  const client = await pool.connect();
+  await client.query(
+    "UPDATE users SET reset_token=($1), password=($2) WHERE email=($3) AND reset_token=($4)",
+    [null, req.body.password, req.body.email, req.body.reset_token]
+  );
+  res.redirect("/login");
 });
 
 //reset and set database
