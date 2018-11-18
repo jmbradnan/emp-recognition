@@ -231,12 +231,16 @@ describe("System", function() {
 
     before(function(done) {
       browser.fill("input[name=email]", "user2@user.com");
-      browser.fill("input[name=password]", "newpass");
+      browser.fill("input[name=password]", "password");
       browser.pressButton("Submit", done);
     });
 
     it("should be successful", function() {
       browser.assert.success();
+    });
+
+    it("should be on the home page", function() {
+      browser.assert.url({ pathname: "/user/awards/index" });
     });
 
     it("other user's award should not appear", function() {
