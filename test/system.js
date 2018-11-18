@@ -7,8 +7,8 @@ Browser.waitDuration = "50s";
 Browser.localhost("example.com", 5000);
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-  //ssl: true
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
 });
 
 describe("System", function() {
@@ -239,7 +239,7 @@ describe("System", function() {
       browser.assert.success();
     });
 
-    it("award should be deleted", function() {
+    it("other user's award should not appear", function() {
       assert.notEqual(
         browser.text("tr:first-child td:nth-child(3)"),
         "user@user.com"
