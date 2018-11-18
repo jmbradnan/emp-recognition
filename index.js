@@ -10,7 +10,6 @@ const pool = new Pool({
   ssl: true
 });
 
-
 //require modules
 const http = require("http");
 var express = require("express");
@@ -58,13 +57,6 @@ app.locals.moment = moment;
 /*
  * User Routes
  */
-//user logout
-app.get("/user/logout", ensureLoggedIn("/login"), function(req, res) {
-  if (req.user.administrator) res.redirect("/login");
-  req.logout();
-  res.redirect("/login");
-});
-
 //show all awards
 app.get("/user/awards/index", ensureLoggedIn("/login"), async (req, res) => {
   if (req.user.administrator) res.redirect("/login");
@@ -141,13 +133,13 @@ app.post("/user/name/update", ensureLoggedIn("/login"), async (req, res) => {
   client.release();
 });
 
-
 /*
  * Admin Routes
  */
 
-app.get("/awardsCreatedReport", async (req, res) => {
+app.get("/awardsCreatedReport", ensureLoggedIn("/login"), async (req, res) => {
   try {
+    if (!req.user.administrator) res.redirect("/login");
     const client = await pool.connect();
     const queryResult = await client.query(`
       SELECT user_id
@@ -163,8 +155,9 @@ app.get("/awardsCreatedReport", async (req, res) => {
   }
 });
 
-app.get("/displayusers", async (req, res) => {
+app.get("/displayusers", ensureLoggedIn("/login"), async (req, res) => {
   try {
+    if (!req.user.administrator) res.redirect("/login");
     const client = await pool.connect();
     const queryResult = await client.query("SELECT * FROM users");
     const data = { jsonData: queryResult ? queryResult.rows : null };
@@ -178,8 +171,9 @@ app.get("/displayusers", async (req, res) => {
   }
 });
 
-app.get("/edituser", async (req, res) => {
+app.get("/edituser", ensureLoggedIn("/login"), async (req, res) => {
   try {
+    if (!req.user.administrator) res.redirect("/login");
     const client = await pool.connect();
     const result = await client.query("select * from users");
     const results = { results: result ? result.rows : null };
@@ -191,8 +185,9 @@ app.get("/edituser", async (req, res) => {
   }
 });
 
-app.get("/createuser", async (req, res) => {
+app.get("/createuser", ensureLoggedIn("/login"), async (req, res) => {
   try {
+    if (!req.user.administrator) res.redirect("/login");
     res.render("pages/admin/createuser");
   } catch (err) {
     console.error(err);
@@ -200,8 +195,9 @@ app.get("/createuser", async (req, res) => {
   }
 });
 
-app.get("/reports", async (req, res) => {
+app.get("/reports", ensureLoggedIn("/login"), async (req, res) => {
   try {
+    if (!req.user.administrator) res.redirect("/login");
     res.render("pages/admin/reports");
   } catch (err) {
     console.error(err);
@@ -209,8 +205,9 @@ app.get("/reports", async (req, res) => {
   }
 });
 
-app.get("/search", async (req, res) => {
+app.get("/search", ensureLoggedIn("/login"), async (req, res) => {
   try {
+    if (!req.user.administrator) res.redirect("/login");
     res.render("pages/admin/search");
   } catch (err) {
     console.error(err);
@@ -219,9 +216,10 @@ app.get("/search", async (req, res) => {
 });
 
 // get user fields by id
-app.get("/get-user", async (req, res) => {
+app.get("/get-user", ensureLoggedIn("/login"), async (req, res) => {
   console.log(req.query.id);
   try {
+    if (!req.user.administrator) res.redirect("/login");
     const client = await pool.connect();
     var id = "id=" + req.query.id;
     const queryResult = await client.query("SELECT * FROM users WHERE " + id);
@@ -236,8 +234,9 @@ app.get("/get-user", async (req, res) => {
 });
 
 // delete user
-app.get("/delete-user", async (req, res) => {
+app.get("/delete-user", ensureLoggedIn("/login"), async (req, res) => {
   try {
+    if (!req.user.administrator) res.redirect("/login");
     const client = await pool.connect();
     const queryResult = await client.query("DELETE FROM users WHERE id=($1)", [
       req.query.id
@@ -251,7 +250,8 @@ app.get("/delete-user", async (req, res) => {
 });
 
 // update user info
-app.post("/update-user", function(req, res) {
+app.post("/update-user", ensureLoggedIn("/login"), function(req, res) {
+  if (!req.user.administrator) res.redirect("/login");
   var data = [
     req.body.id,
     req.body.fname,
@@ -273,7 +273,8 @@ app.post("/update-user", function(req, res) {
 });
 
 // add a new user
-app.post("/new-user", function(req, res) {
+app.post("/new-user", ensureLoggedIn("/login"), function(req, res) {
+  if (!req.user.administrator) res.redirect("/login");
   var admin = req.body.administrator;
   var isAdmin = admin === "true" ? true : false;
   var data = [
@@ -298,8 +299,9 @@ app.post("/new-user", function(req, res) {
 });
 
 // get administration page
-app.get("/administration", async (req, res) => {
+app.get("/administration", ensureLoggedIn("/login"), async (req, res) => {
   try {
+    if (!req.user.administrator) res.redirect("/login");
     const client = await pool.connect();
     const result = await client.query("select * from users");
     const results = { results: result ? result.rows : null };
@@ -315,8 +317,9 @@ app.get("/administration", async (req, res) => {
  * Reporting Routes
  */
 // Display all awards as admin
-app.get("/displayAllAwards", async (req, res) => {
+app.get("/displayAllAwards", ensureLoggedIn("/login"), async (req, res) => {
   try {
+    if (!req.user.administrator) res.redirect("/login");
     const client = await pool.connect();
     var queryResult = await client.query(`
       SELECT award_types.type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
@@ -333,8 +336,9 @@ app.get("/displayAllAwards", async (req, res) => {
   }
 });
 
-app.get("/awardsOverTimeReport", async (req, res) => {
+app.get("/awardsOverTimeReport", ensureLoggedIn("/login"), async (req, res) => {
   try {
+    if (!req.user.administrator) res.redirect("/login");
     const client = await pool.connect();
     const queryResult = await client.query(`
       SELECT award_types.type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
@@ -370,12 +374,19 @@ app.get("/login", async (req, res) => {
 });
 
 //login validation
-app.post("/login/validate",
+app.post(
+  "/login/validate",
   passport.authenticate("local", { failureRedirect: "/login" }),
   function(req, res) {
     res.redirect("/login");
   }
 );
+
+//logout
+app.get("/logout", ensureLoggedIn("/login"), function(req, res) {
+  req.logout();
+  res.redirect("/login");
+});
 
 //show form for creating a reset password token
 app.get("/password", async (req, res) => {
@@ -438,90 +449,78 @@ app.post("/password/update", async (req, res) => {
 
 //reset and set database
 app.get("/reset", async (req, res) => {
-  try {
-    const client = await pool.connect();
+  const client = await pool.connect();
 
-    //drop tables if exist
-    await client.query("DROP TABLE IF EXISTS award_types CASCADE;");
-    await client.query("DROP TABLE IF EXISTS users CASCADE;");
-    await client.query("DROP TABLE IF EXISTS awards CASCADE;");
+  //drop tables if exist
+  await client.query("DROP TABLE IF EXISTS award_types CASCADE;");
+  await client.query("DROP TABLE IF EXISTS users CASCADE;");
+  await client.query("DROP TABLE IF EXISTS awards CASCADE;");
 
-    //create tables
-    await client.query(`
-      CREATE TABLE award_types (
-        id serial PRIMARY KEY,
-        type varchar(64) NOT NULL
-      );
-    `);
-    await client.query(`
-      CREATE TABLE users (
-        id serial PRIMARY KEY,
-        fname text NOT NULL,
-        lname text NOT NULL,
-        email text NOT NULL,
-        password text NOT NULL,
-        reset_token varchar(64),
-        signature text,
-        administrator bool NOT NULL DEFAULT FALSE
-      );
-    `);
-    await client.query(`
-      CREATE TABLE awards (
-        id serial PRIMARY KEY,
-        type_id integer REFERENCES award_types(id) ON DELETE CASCADE NOT NULL,
-        user_id integer REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-        name varchar(64) NOT NULL,
-        email varchar(64) NOT NULL,
-        time time NOT NULL,
-        date date NOT NULL
-      );
-    `);
+  //create tables
+  await client.query(`
+    CREATE TABLE award_types (
+      id serial PRIMARY KEY,
+      type varchar(64) NOT NULL
+    );
+  `);
+  await client.query(`
+    CREATE TABLE users (
+      id serial PRIMARY KEY,
+      fname text NOT NULL,
+      lname text NOT NULL,
+      email text NOT NULL,
+      password text NOT NULL,
+      reset_token varchar(64),
+      signature text,
+      administrator bool NOT NULL DEFAULT FALSE
+    );
+  `);
+  await client.query(`
+    CREATE TABLE awards (
+      id serial PRIMARY KEY,
+      type_id integer REFERENCES award_types(id) ON DELETE CASCADE NOT NULL,
+      user_id integer REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+      name varchar(64) NOT NULL,
+      email varchar(64) NOT NULL,
+      time time NOT NULL,
+      date date NOT NULL
+    );
+  `);
 
-    //seed database
-    var user = await client.query(
-      "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
-      [
-        faker.name.firstName(),
-        faker.name.lastName(),
-        "user@user.com",
-        "password"
-      ]
-    );
-    await client.query(
-      "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4), DEFAULT, DEFAULT, ($5)) RETURNING id",
-      [
-        faker.name.firstName(),
-        faker.name.lastName(),
-        "admin@admin.com",
-        "password",
-        true
-      ]
-    );
-    await client.query("INSERT INTO award_types VALUES(DEFAULT, ($1))", [
-      "Week"
-    ]);
-    var type = await client.query(
-      "INSERT INTO award_types VALUES(DEFAULT, ($1)) RETURNING id",
-      ["Month"]
-    );
-    await client.query(
-      "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
-      [
-        type.rows[0].id,
-        user.rows[0].id,
-        faker.name.findName(),
-        faker.internet.email(),
-        "13:45",
-        faker.date.past()
-      ]
-    );
+  //seed database
+  var user = await client.query(
+    "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
+    [faker.name.firstName(), faker.name.lastName(), "user@user.com", "password"]
+  );
+  await client.query(
+    "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4), DEFAULT, DEFAULT, ($5)) RETURNING id",
+    [
+      faker.name.firstName(),
+      faker.name.lastName(),
+      "admin@admin.com",
+      "password",
+      true
+    ]
+  );
+  await client.query("INSERT INTO award_types VALUES(DEFAULT, ($1))", ["Week"]);
+  var type = await client.query(
+    "INSERT INTO award_types VALUES(DEFAULT, ($1)) RETURNING id",
+    ["Month"]
+  );
+  await client.query(
+    "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
+    [
+      type.rows[0].id,
+      user.rows[0].id,
+      faker.name.findName(),
+      faker.internet.email(),
+      "13:45",
+      faker.date.past()
+    ]
+  );
 
-    res.render("pages/reset", { user: null });
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("Error: " + err);
-  }
+  res.render("pages/reset", { user: null });
+  client.release();
 });
 
 app.use(function(req, res) {
