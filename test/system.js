@@ -224,6 +224,33 @@ describe("System", function() {
     });
   });
 
+  describe("Users can only see awards they created", function() {
+    before(function(done) {
+      browser.visit("/logout", done);
+    });
+
+    before(function(done) {
+      browser.fill("input[name=email]", "user2@user.com");
+      browser.fill("input[name=password]", "password");
+      browser.pressButton("Submit", done);
+    });
+
+    it("should be successful", function() {
+      browser.assert.success();
+    });
+
+    it("should be on the home page", function() {
+      browser.assert.url({ pathname: "/user/awards/index" });
+    });
+
+    it("other user's award should not appear", function() {
+      assert.notEqual(
+        browser.text("tr:first-child td:nth-child(3)"),
+        "user@user.com"
+      );
+    });
+  });
+
   /*
    * Admin Testing
    */
