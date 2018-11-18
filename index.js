@@ -6,8 +6,8 @@ require("dotenv").config();
 
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: process.env.DATABASE_URL
+  //ssl: true
 });
 
 //require modules
@@ -58,13 +58,6 @@ app.locals.moment = moment;
 /*
  * User Routes
  */
-//user logout
-app.get("/user/logout", ensureLoggedIn("/login"), function(req, res) {
-  if (req.user.administrator) res.redirect("/login");
-  req.logout();
-  res.redirect("/login");
-});
-
 //show all awards
 app.get("/user/awards/index", ensureLoggedIn("/login"), async (req, res) => {
   if (req.user.administrator) res.redirect("/login");
@@ -336,6 +329,12 @@ app.post("/login/validate",
   }
 );
 
+//logout
+app.get("/logout", ensureLoggedIn("/login"), function(req, res) {
+  req.logout();
+  res.redirect("/login");
+});
+
 //show form for creating a reset password token
 app.get("/password", async (req, res) => {
   res.render("pages/password", { user: null });
@@ -397,90 +396,85 @@ app.post("/password/update", async (req, res) => {
 
 //reset and set database
 app.get("/reset", async (req, res) => {
-  try {
-    const client = await pool.connect();
+  const client = await pool.connect();
 
-    //drop tables if exist
-    await client.query("DROP TABLE IF EXISTS award_types CASCADE;");
-    await client.query("DROP TABLE IF EXISTS users CASCADE;");
-    await client.query("DROP TABLE IF EXISTS awards CASCADE;");
+  //drop tables if exist
+  await client.query("DROP TABLE IF EXISTS award_types CASCADE;");
+  await client.query("DROP TABLE IF EXISTS users CASCADE;");
+  await client.query("DROP TABLE IF EXISTS awards CASCADE;");
 
-    //create tables
-    await client.query(`
-      CREATE TABLE award_types (
-        id serial PRIMARY KEY,
-        type varchar(64) NOT NULL
-      );
-    `);
-    await client.query(`
-      CREATE TABLE users (
-        id serial PRIMARY KEY,
-        fname text NOT NULL,
-        lname text NOT NULL,
-        email text NOT NULL,
-        password text NOT NULL,
-        reset_token varchar(64),
-        signature text,
-        administrator bool NOT NULL DEFAULT FALSE
-      );
-    `);
-    await client.query(`
-      CREATE TABLE awards (
-        id serial PRIMARY KEY,
-        type_id integer REFERENCES award_types(id) ON DELETE CASCADE NOT NULL,
-        user_id integer REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-        name varchar(64) NOT NULL,
-        email varchar(64) NOT NULL,
-        time time NOT NULL,
-        date date NOT NULL
-      );
-    `);
+  //create tables
+  await client.query(`
+    CREATE TABLE award_types (
+      id serial PRIMARY KEY,
+      type varchar(64) NOT NULL
+    );
+  `);
+  await client.query(`
+    CREATE TABLE users (
+      id serial PRIMARY KEY,
+      fname text NOT NULL,
+      lname text NOT NULL,
+      email text NOT NULL,
+      password text NOT NULL,
+      reset_token varchar(64),
+      signature text,
+      administrator bool NOT NULL DEFAULT FALSE
+    );
+  `);
+  await client.query(`
+    CREATE TABLE awards (
+      id serial PRIMARY KEY,
+      type_id integer REFERENCES award_types(id) ON DELETE CASCADE NOT NULL,
+      user_id integer REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+      name varchar(64) NOT NULL,
+      email varchar(64) NOT NULL,
+      time time NOT NULL,
+      date date NOT NULL
+    );
+  `);
 
-    //seed database
-    var user = await client.query(
-      "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
-      [
-        faker.name.firstName(),
-        faker.name.lastName(),
-        "user@user.com",
-        "password"
-      ]
-    );
-    await client.query(
-      "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4), DEFAULT, DEFAULT, ($5)) RETURNING id",
-      [
-        faker.name.firstName(),
-        faker.name.lastName(),
-        "admin@admin.com",
-        "password",
-        true
-      ]
-    );
-    await client.query("INSERT INTO award_types VALUES(DEFAULT, ($1))", [
-      "Week"
-    ]);
-    var type = await client.query(
-      "INSERT INTO award_types VALUES(DEFAULT, ($1)) RETURNING id",
-      ["Month"]
-    );
-    await client.query(
-      "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
-      [
-        type.rows[0].id,
-        user.rows[0].id,
-        faker.name.findName(),
-        faker.internet.email(),
-        "13:45",
-        faker.date.past()
-      ]
-    );
+  //seed database
+  var user = await client.query(
+    "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
+    [
+      faker.name.firstName(),
+      faker.name.lastName(),
+      "user@user.com",
+      "password"
+    ]
+  );
+  await client.query(
+    "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4), DEFAULT, DEFAULT, ($5)) RETURNING id",
+    [
+      faker.name.firstName(),
+      faker.name.lastName(),
+      "admin@admin.com",
+      "password",
+      true
+    ]
+  );
+  await client.query("INSERT INTO award_types VALUES(DEFAULT, ($1))", [
+    "Week"
+  ]);
+  var type = await client.query(
+    "INSERT INTO award_types VALUES(DEFAULT, ($1)) RETURNING id",
+    ["Month"]
+  );
+  await client.query(
+    "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
+    [
+      type.rows[0].id,
+      user.rows[0].id,
+      faker.name.findName(),
+      faker.internet.email(),
+      "13:45",
+      faker.date.past()
+    ]
+  );
 
-    res.render("pages/reset", { user: null });
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("Error: " + err);
-  }
+  res.render("pages/reset", { user: null });
+  client.release();
 });
 
 app.use(function(req, res) {

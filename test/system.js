@@ -7,11 +7,11 @@ Browser.waitDuration = "50s";
 Browser.localhost("example.com", 5000);
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: process.env.DATABASE_URL
+  //ssl: true
 });
 
-describe("User", function() {
+describe("System", function() {
   const browser = new Browser();
 
   before(function(done) {
@@ -185,7 +185,7 @@ describe("User", function() {
 
   describe("admin is redirected to /administration", function() {
     before(function(done) {
-      browser.visit("/user/logout", done);
+      browser.visit("/logout", done);
     });
 
     before(function(done) {
@@ -214,6 +214,24 @@ describe("User", function() {
 
     it("should be on the home page", function() {
       browser.assert.url({ pathname: "/administration" });
+    });
+  });
+
+  describe("admin can logout", function() {
+    before(function(done) {
+      browser.clickLink("Logout", done);
+    });
+
+    before(function(done) {
+      browser.visit("/user/awards/index", done);
+    });
+
+    it("should be successful", function() {
+      browser.assert.success();
+    });
+
+    it("should be on the login page", function() {
+      browser.assert.url({ pathname: "/login" });
     });
   });
 });

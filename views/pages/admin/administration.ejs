@@ -15,11 +15,12 @@
 	<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
   	<a class="navbar-brand" href="#">Employee Recognition</a>
 		<div class="nav navbar-nav container-fluid">
-			<li class="nav id="allUsersNavigation" onclick="showUsers()">All Users</li>
-			<li class="nav id="newUserNavigation" onclick="createNewUser()">New User</li>
-			<li class="nav id="editUserNavigation" onclick="displayUserList()">Edit User</li>
-			<li class="nav id="reportsNavigation" onclick="reportsDisplay()">Reporting</li>
-			<li class="nav id="searchNavigation" onclick="searchForUser()">Search</li>
+			<li class="nav" id="allUsersNavigation" onclick="showUsers()">All Users</li>
+			<li class="nav" id="newUserNavigation" onclick="createNewUser()">New User</li>
+			<li class="nav" id="editUserNavigation" onclick="displayUserList()">Edit User</li>
+			<li class="nav" id="reportsNavigation" onclick="reportsDisplay()">Reporting</li>
+			<li class="nav" id="searchNavigation" onclick="searchForUser()">Search</li>
+                        <a href="/logout" class="nav">Logout</a>
 		</div>
 		</div>
 	</nav>
@@ -33,14 +34,14 @@ function getDocHeight(doc) {
     doc = doc || document;
     // stackoverflow.com/questions/1145850/
     var body = doc.body, html = doc.documentElement;
-    var height = Math.max( body.scrollHeight, body.offsetHeight, 
+    var height = Math.max( body.scrollHeight, body.offsetHeight,
         html.clientHeight, html.scrollHeight, html.offsetHeight );
     return height;
 }
 
 function setIframeHeight(id) {
     var ifrm = document.getElementById(id);
-    var doc = ifrm.contentDocument? ifrm.contentDocument: 
+    var doc = ifrm.contentDocument? ifrm.contentDocument:
         ifrm.contentWindow.document;
     ifrm.style.visibility = 'hidden';
     ifrm.style.height = "10px"; // reset to minimal height ...
@@ -52,11 +53,11 @@ function setIframeHeight(id) {
 
 
 </script>
-<!-- Content Area 
+<!-- Content Area
 https://www.dyn-web.com/tutorials/iframes/height/
 -->
 <div class="container">
- 	<iframe id="admin_content-area" frameBorder="0" marginheight="50" class="embed-responsive-item"  width="500" onload="setIframeHeight(this.id)"></iframe> 
+ 	<iframe id="admin_content-area" frameBorder="0" marginheight="50" class="embed-responsive-item"  width="500" onload="setIframeHeight(this.id)"></iframe>
 </div>
 
 
@@ -72,7 +73,7 @@ https://www.dyn-web.com/tutorials/iframes/height/
 </fieldset>
 
 </div>
-	
+
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
