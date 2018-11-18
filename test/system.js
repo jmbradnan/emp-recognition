@@ -18,7 +18,10 @@ describe("System", function() {
     browser.visit("/reset", done);
   });
 
-  describe("is redirected to home page after login", function() {
+  /*
+   * User Testing
+   */
+  describe("User is redirected to home page after login", function() {
     before(function(done) {
       browser.visit("/", done);
     });
@@ -38,7 +41,7 @@ describe("System", function() {
     });
   });
 
-  describe("can create a new award", function() {
+  describe("User can create a new award", function() {
     before(function(done) {
       browser.visit("/user/awards/new", done);
     });
@@ -70,7 +73,7 @@ describe("System", function() {
     });
   });
 
-  describe("can delete an award", function() {
+  describe("User can delete an award", function() {
     before(function(done) {
       browser.visit("/user/awards/index", done);
     });
@@ -95,7 +98,7 @@ describe("System", function() {
     });
   });
 
-  describe("can change name", function() {
+  describe("User can change name", function() {
     before(function(done) {
       browser.visit("/user/name/edit", done);
     });
@@ -120,7 +123,7 @@ describe("System", function() {
     });
   });
 
-  describe("can logout", function() {
+  describe("User can logout", function() {
     before(function(done) {
       browser.visit("/user/awards/index", done);
     });
@@ -142,7 +145,7 @@ describe("System", function() {
     });
   });
 
-  describe("can reset password and login", function() {
+  describe("User can reset password and login", function() {
     before(function(done) {
       browser.visit("/password", done);
     });
@@ -153,14 +156,18 @@ describe("System", function() {
     });
 
     before(function(done) {
-      pool.query("SELECT * FROM users WHERE email=($1);", ["user@user.com"], (err, res) => {
-        var reset_token = res.rows[0].reset_token;
-        browser.visit(
-          `/password/edit?email=user@user.com&reset_token=${reset_token}`,
-          done
-        );
-        pool.end();
-      });
+      pool.query(
+        "SELECT * FROM users WHERE email=($1);",
+        ["user@user.com"],
+        (err, res) => {
+          var reset_token = res.rows[0].reset_token;
+          browser.visit(
+            `/password/edit?email=user@user.com&reset_token=${reset_token}`,
+            done
+          );
+          pool.end();
+        }
+      );
     });
 
     before(function(done) {
@@ -183,7 +190,24 @@ describe("System", function() {
     });
   });
 
-  describe("admin is redirected to /administration", function() {
+  describe("User  is redirected when visiting a Admin page", function() {
+    before(function(done) {
+      browser.visit("/administration", done);
+    });
+
+    it("should be successful", function() {
+      browser.assert.success();
+    });
+
+    it("should be on the home page", function() {
+      browser.assert.url({ pathname: "/user/awards/index" });
+    });
+  });
+
+  /*
+   * Admin Testing
+   */
+  describe("Admin is redirected to /administration", function() {
     before(function(done) {
       browser.visit("/logout", done);
     });
@@ -203,7 +227,7 @@ describe("System", function() {
     });
   });
 
-  describe("admin is redirected when visiting a user page", function() {
+  describe("Admin is redirected when visiting a user page", function() {
     before(function(done) {
       browser.visit("/user/awards/index", done);
     });
@@ -217,7 +241,7 @@ describe("System", function() {
     });
   });
 
-  describe("admin can logout", function() {
+  describe("Admin can logout", function() {
     before(function(done) {
       browser.clickLink("Logout", done);
     });
