@@ -6,3 +6,6 @@ xfor
 substr
 etoolbox
 fp
+datetime2
+datetime2-english
+tracklang
