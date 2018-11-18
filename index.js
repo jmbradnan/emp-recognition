@@ -6,8 +6,8 @@ require("dotenv").config();
 
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-  //ssl: true
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
 });
 
 //require modules
@@ -442,8 +442,18 @@ app.get("/reset", async (req, res) => {
       [
         faker.name.firstName(),
         faker.name.lastName(),
-        "admin@admin.com",
+        "user@user.com",
         "password"
+      ]
+    );
+    await client.query(
+      "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4), DEFAULT, DEFAULT, ($5)) RETURNING id",
+      [
+        faker.name.firstName(),
+        faker.name.lastName(),
+        "admin@admin.com",
+        "password",
+        true
       ]
     );
     await client.query("INSERT INTO award_types VALUES(DEFAULT, ($1))", [

@@ -7,8 +7,8 @@ Browser.waitDuration = "50s";
 Browser.localhost("example.com", 5000);
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-  //ssl: true
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
 });
 
 describe("User", function() {
@@ -24,7 +24,7 @@ describe("User", function() {
     });
 
     before(function(done) {
-      browser.fill("input[name=email]", "admin@admin.com");
+      browser.fill("input[name=email]", "user@user.com");
       browser.fill("input[name=password]", "password");
       browser.pressButton("Submit", done);
     });
@@ -62,7 +62,7 @@ describe("User", function() {
 
     it("assert text", function() {
       browser.assert.text("tr:last-child td:nth-child(2)", "Week");
-      browser.assert.text("tr:last-child td:nth-child(3)", "admin@admin.com");
+      browser.assert.text("tr:last-child td:nth-child(3)", "user@user.com");
       browser.assert.text("tr:last-child td:nth-child(4)", "Tester Name");
       browser.assert.text("tr:last-child td:nth-child(5)", "test@email.com");
       browser.assert.text("tr:last-child td:nth-child(6)", "1:45 PM");
@@ -148,15 +148,15 @@ describe("User", function() {
     });
 
     before(function(done) {
-      browser.fill("input[name=email]", "admin@admin.com");
+      browser.fill("input[name=email]", "user@user.com");
       browser.pressButton("Send Reset Password Email", done);
     });
 
     before(function(done) {
-      pool.query("SELECT * FROM users;", (err, res) => {
+      pool.query("SELECT * FROM users WHERE email=($1);", ["user@user.com"], (err, res) => {
         var reset_token = res.rows[0].reset_token;
         browser.visit(
-          `/password/edit?email=admin@admin.com&reset_token=${reset_token}`,
+          `/password/edit?email=user@user.com&reset_token=${reset_token}`,
           done
         );
         pool.end();
@@ -169,7 +169,7 @@ describe("User", function() {
     });
 
     before(function(done) {
-      browser.fill("input[name=email]", "admin@admin.com");
+      browser.fill("input[name=email]", "user@user.com");
       browser.fill("input[name=password]", "newpass");
       browser.pressButton("Submit", done);
     });
@@ -180,6 +180,40 @@ describe("User", function() {
 
     it("should be on the home page", function() {
       browser.assert.url({ pathname: "/user/awards/index" });
+    });
+  });
+
+  describe("admin is redirected to /administration", function() {
+    before(function(done) {
+      browser.visit("/user/logout", done);
+    });
+
+    before(function(done) {
+      browser.fill("input[name=email]", "admin@admin.com");
+      browser.fill("input[name=password]", "password");
+      browser.pressButton("Submit", done);
+    });
+
+    it("should be successful", function() {
+      browser.assert.success();
+    });
+
+    it("should be on the home page", function() {
+      browser.assert.url({ pathname: "/administration" });
+    });
+  });
+
+  describe("admin is redirected when visiting a user page", function() {
+    before(function(done) {
+      browser.visit("/user/awards/index", done);
+    });
+
+    it("should be successful", function() {
+      browser.assert.success();
+    });
+
+    it("should be on the home page", function() {
+      browser.assert.url({ pathname: "/administration" });
     });
   });
 });
