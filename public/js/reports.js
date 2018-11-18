@@ -1,11 +1,22 @@
-
+function displayAllAwards() {
+    var url = "/displayAllAwards";
+    fetch(url).then(function(response) {
+    if(response.ok) {
+      response.json().then(function(json) {
+        getAllAwardsChart(json);
+      });
+    } else {
+      console.log("error");
+    }
+  });
+}
 
 function awardsCreated() {
     var url = "/awardsCreatedReport";
     fetch(url).then(function(response) {
     if(response.ok) {
       response.json().then(function(json) {
-        getAwardsCreatedChartData(json);
+        getAwardsCreatedChart(json);
       });
     } else {
       console.log("error");
@@ -18,7 +29,7 @@ function awardsOverTime() {
     fetch(url).then(function(response) {
     if(response.ok) {
       response.json().then(function(json) {
-        getAwardsOverTimeChartData(json);
+        getAwardsOverTimeChart(json);
       });
     } else {
       console.log("error");
@@ -26,10 +37,38 @@ function awardsOverTime() {
   });
 }
 
-function getAwardsOverTimeChartData(json) {
+function getAllAwardsChart(json) {
+    var data = new google.visualization.DataTable();
+    showFields('#report_area');
+    data.addColumn('string', 'Award From');
+    data.addColumn('string', 'Award To');
+    data.addColumn('string', 'Email');
+    data.addColumn('string', 'Award-Type');
+    data.addColumn('string', 'Time');
+    data.addColumn('string', 'Date');
+    var table = new Array();
+    for (i=0; i<json.length; i++) {
+        var sender = json[i]['user'];
+        var recipient = json[i]['name'];
+        var email = json[i]['email'];
+        var type = json[i]['type'];
+        var time = moment(json[i]['time'], 'HH:mm:ss').format('h:mm A');
+        var date = json[i]['date'].split("T");
+        var dateShortened = date[0];
+        table.push([sender, recipient, email, type, time, dateShortened]);
+    }
+
+    data.addRows(table);
+
+    // Instantiate and draw our chart, passing in some options.
+    var chart = new google.visualization.Table(document.getElementById('report'));
+    chart.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+}
+
+function getAwardsOverTimeChart(json) {
     var data = new google.visualization.DataTable();
     var months = ["Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
-    showFields('#report_area')
+    showFields('#report_area');
     data.addColumn('string', 'Date');
     data.addColumn('number', 'Awards');
     data.addColumn('number', 'Weekly');
@@ -93,10 +132,10 @@ function getAwardsOverTimeChartData(json) {
     
 }
 
-function getAwardsCreatedChartData(json) {
+function getAwardsCreatedChart(json) {
     var data = new google.visualization.DataTable();
   
-    showFields('#report_area')
+    showFields('#report_area');
     data.addColumn('string', 'Name');
     data.addColumn('number', 'count');
 

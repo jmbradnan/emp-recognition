@@ -14,7 +14,7 @@
 	<fieldset id="reports_fields">
 		<div class="container">
 		<h5>Available Reports</h5>
-
+		<input type="radio" name="created_reports" onclick="displayAllAwards()">  All Awards</input><br>
 		<input type="radio" name="created_reports" onclick="awardsCreated()">  Award Givers</input><br>
 		<input type="radio" name="created_reports" onclick="awardsOverTime()">  Awards created over time</input>
 		</div>
@@ -41,8 +41,10 @@
 
 	<script src="/js/common.js"></script>
 	<script src="/js/reports.js"></script>
-	  <script type="text/javascript">
-    google.charts.load('current', {packages: ['corechart']});
+	<script src="https://cdn.jsdelivr.net/momentjs/2.13.0/moment.min.js"></script>
+	<script type="text/javascript">
+    	google.charts.load('current', {packages: ['corechart']});
+		google.charts.load('current', {'packages':['table']});
 	</script>
 
 </body>

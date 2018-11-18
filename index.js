@@ -18,7 +18,6 @@ const pool = new Pool({
 
 //require modules
 const http = require("http");
-var moment = require("moment");
 var express = require("express");
 const path = require("path");
 var bodyParser = require("body-parser");
@@ -206,8 +205,23 @@ app.post("/user/name/edit", ensureLoggedIn("/user/login"), async (req, res) => {
  * Reporting Routes
  */
 
-      // SELECT date
-      // FROM awards
+app.get("/displayAllAwards", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    var queryResult = await client.query(`
+      SELECT award_types.name as type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
+      FROM awards JOIN award_types ON awards.type_id = award_types.id
+      JOIN users ON awards.user_id = users.id
+    `);
+    const results = { jsonData: queryResult ? queryResult.rows : null };
+    console.log(results);
+    res.send(results.jsonData);
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
+});
 
 app.get("/awardsOverTimeReport", async (req, res) => {
   try {
