@@ -5,10 +5,16 @@
 require("dotenv").config();
 
 const { Pool } = require("pg");
+// const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: true
+// });
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: "postgres://dev:ABC123@localhost/postgres",
+  ssl: false
 });
+
 
 //require modules
 const http = require("http");
@@ -197,8 +203,30 @@ app.post("/user/name/edit", ensureLoggedIn("/user/login"), async (req, res) => {
 });
 
 /*
- * Admin Routes
+ * Reporting Routes
  */
+
+      // SELECT date
+      // FROM awards
+
+app.get("/awardsOverTimeReport", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const queryResult = await client.query(`
+      SELECT award_types.name as type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
+      FROM awards JOIN award_types ON awards.type_id = award_types.id
+      JOIN users ON awards.user_id = users.id ORDER BY awards.date
+      `);
+    const results = { jsonData: queryResult ? queryResult.rows : null };
+    console.log(results);
+    res.send(results.jsonData);
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
+});
+
 
 app.get("/awardsCreatedReport", async (req, res) => {
   try {
@@ -216,6 +244,10 @@ app.get("/awardsCreatedReport", async (req, res) => {
     res.send("Error: " + err);
   }
 });
+
+/*
+ * Admin Routes
+ */
 
 app.get("/displayusers", async (req, res) => {
   try {

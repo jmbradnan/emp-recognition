@@ -31,9 +31,14 @@ function getAwardsOverTimeChartData(json) {
     var months = ["Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
     showFields('#report_area')
     data.addColumn('string', 'Date');
-    data.addColumn('number', 'awards');
+    data.addColumn('number', 'Awards');
+    data.addColumn('number', 'Weekly');
+    data.addColumn('number', 'Monthly');
     console.log(json);
+    var table = new Array();
+    var keys = [];
     var awardsCount = {};
+    var typeCount = {};
     for (i=0; i<json.length; i++) {
         var returnedDate = json[i]['date'];
         var date = returnedDate.split("T");
@@ -42,35 +47,50 @@ function getAwardsOverTimeChartData(json) {
         var month = parts[1];
         var year = parts[0];
         var id = month+year;
+        var type = json[i]['type'];
         if (!awardsCount.hasOwnProperty(id)) {
-            awardsCount[id] = 1;
+            keys.push(id);
+            if (type === "Month") {
+                awardsCount[id] = [1, 0, 1];
+            } else {
+                awardsCount[id] = [1, 1, 0];
+            }
         } else {
-           awardsCount[id] += 1;
+           awardsCount[id][0] += 1;
+           if (type === "Month") {
+               awardsCount[id][2] += 1;
+           } else {
+               awardsCount[id][1] += 1;
+           }
         }
         console.log(awardsCount);
     }
-    var table = new Array();
-    var keys = Object.keys(awardsCount);
+    // var keys = Object.keys(awardsCount);   // need these in date sorted order
     for (j=0; j<keys.length; j++) {
         var monthLabel = keys[j].substring(0,2).replace(/^[0|\D]*/,'');
         var monthPosition = parseInt(monthLabel) -1;
         var yearLabel = keys[j].substring(2,6);
-        var count = awardsCount[keys[j]];
+        var count = awardsCount[keys[j]][0];
+        var weekly = awardsCount[keys[j]][1];
+        var monthly = awardsCount[keys[j]][2];
         var dateLabel = months[monthPosition] + " " + yearLabel;
         console.log(monthLabel);
-        table.push(dateLabel, count);
+        table.push([dateLabel, count, weekly, monthly]);
+        console.log(table);
     }
-     if (table.length === keys.length) {
         data.addRows(table);
         // Set chart options
-        var options = {'title':'Who is making awards',
-            'width':400,
-            'height':300};
+        var options = {'title':'Awards by month',
+          curveType: 'function',
+           'width':400,
+           'height':300,
+          legend: { position: 'bottom' }
+        };
 
     // Instantiate and draw our chart, passing in some options.
-    var chart = new google.visualization.PieChart(document.getElementById('report'));
+    var chart = new google.visualization.LineChart(document.getElementById('report'));
     chart.draw(data, options);
-    }
+    
 }
 
 function getAwardsCreatedChartData(json) {
