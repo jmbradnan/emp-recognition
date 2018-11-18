@@ -52,6 +52,11 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(require('connect-flash')());
+app.use(function (req, res, next) {
+  res.locals.messages = require('express-messages')(req, res);
+  next();
+});
 app.locals.moment = moment;
 
 /*
@@ -76,6 +81,7 @@ app.post("/user/awards/destroy", ensureLoggedIn("/login"), async (req, res) => {
   if (req.user.administrator) res.redirect("/login");
   const client = await pool.connect();
   await client.query("DELETE FROM awards WHERE id=($1)", [req.body.id]);
+  req.flash("info", "Award Deleted");
   res.redirect("/user/awards/index");
   client.release();
 });
@@ -104,6 +110,7 @@ app.post("/user/awards/create", ensureLoggedIn("/login"), async (req, res) => {
       req.body.date
     ]
   );
+  req.flash("info", "Award Created");
   res.redirect("/user/awards/index");
   client.release();
 });
@@ -129,6 +136,7 @@ app.post("/user/name/update", ensureLoggedIn("/login"), async (req, res) => {
     req.body.lname,
     req.user.id
   ]);
+  req.flash("info", "Name Updated");
   res.redirect("/user/name/edit");
   client.release();
 });
@@ -378,6 +386,7 @@ app.post(
   "/login/validate",
   passport.authenticate("local", { failureRedirect: "/login" }),
   function(req, res) {
+    req.flash("info", "Logged In");
     res.redirect("/login");
   }
 );
@@ -385,6 +394,7 @@ app.post(
 //logout
 app.get("/logout", ensureLoggedIn("/login"), function(req, res) {
   req.logout();
+  req.flash("info", "Logged Out");
   res.redirect("/login");
 });
 
@@ -411,13 +421,14 @@ app.post("/password/reset", async (req, res) => {
       subject: "Reset Password",
       html: `
       <p>Hello ${result.rows[0].fname} ${result.rows[0].lname},</p>
-      <a href="https://employee-recognition-app.herokuapp.com/password/edit?email=${req.body.email}&reset_token=${reset_token}">Click here to update your password</a>
+      <p><a href="https://employee-recognition-app.herokuapp.com/password/edit?email=${req.body.email}&reset_token=${reset_token}">Click here to update your password</a></p>
       <p>Thanks,<br>
       Employee Recognition App</p>
       `
     };
     sgMail.send(msg);
   }
+  req.flash("info", "Reset password email sent if account exists");
   res.redirect("/login");
   client.release();
 });
@@ -444,6 +455,7 @@ app.post("/password/update", async (req, res) => {
     "UPDATE users SET reset_token=($1), password=($2) WHERE email=($3) AND reset_token=($4)",
     [null, req.body.password, req.body.email, req.body.reset_token]
   );
+  req.flash("info", "Password Updated");
   res.redirect("/login");
 });
 

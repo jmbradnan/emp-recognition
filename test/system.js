@@ -39,6 +39,10 @@ describe("System", function() {
     it("should see home page", function() {
       browser.assert.url({ pathname: "/user/awards/index" });
     });
+
+    it("should see flash", function() {
+      browser.assert.text(".alert-info", "Logged In");
+    });
   });
 
   describe("User can create a new award", function() {
@@ -71,6 +75,10 @@ describe("System", function() {
       browser.assert.text("tr:last-child td:nth-child(6)", "1:45 PM");
       browser.assert.text("tr:last-child td:nth-child(7)", "5/1/2018");
     });
+
+    it("should see flash", function() {
+      browser.assert.text(".alert-info", "Award Created");
+    });
   });
 
   describe("User can delete an award", function() {
@@ -96,6 +104,10 @@ describe("System", function() {
         "test@email.com"
       );
     });
+
+    it("should see flash", function() {
+      browser.assert.text(".alert-info", "Award Deleted");
+    });
   });
 
   describe("User can change name", function() {
@@ -120,6 +132,10 @@ describe("System", function() {
     it("name should be updated", function() {
       browser.assert.input("input[name=fname]", "new_first_name");
       browser.assert.input("input[name=lname]", "new_last_name");
+    });
+
+    it("should see flash", function() {
+      browser.assert.text(".alert-info", "Name Updated");
     });
   });
 
@@ -188,9 +204,13 @@ describe("System", function() {
     it("should be on the home page", function() {
       browser.assert.url({ pathname: "/user/awards/index" });
     });
+
+    it("should see flash", function() {
+      browser.assert.text(".alert-info", "Logged In");
+    });
   });
 
-  describe("User  is redirected when visiting a Admin page", function() {
+  describe("User is redirected when visiting a Admin page", function() {
     before(function(done) {
       browser.visit("/administration", done);
     });
@@ -247,7 +267,7 @@ describe("System", function() {
     });
 
     before(function(done) {
-      browser.visit("/user/awards/index", done);
+      browser.visit("/administration", done);
     });
 
     it("should be successful", function() {
