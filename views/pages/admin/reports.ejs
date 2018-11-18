@@ -15,8 +15,10 @@
 		<div class="container">
 		<h5>Available Reports</h5>
 
-		<input type="radio" name="created_reports" onclick="awardsCreated()">  Users that created awards</input>
+		<input type="radio" name="created_reports" onclick="displayAllAwards()">  All Awards</input><br>
 
+		<input type="radio" name="created_reports" onclick="awardsCreated()">  Award Givers</input><br>
+		<input type="radio" name="created_reports" onclick="awardsOverTime()">  Awards created over time</input>
 		</div>
 	</fieldset>
 
@@ -38,11 +40,13 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script src="https://cdn.jsdelivr.net/momentjs/2.13.0/moment.min.js"></script>
 
 	<script src="/js/common.js"></script>
 	<script src="/js/reports.js"></script>
 	  <script type="text/javascript">
     google.charts.load('current', {packages: ['corechart']});
+	google.charts.load('current', {'packages':['table']});
 	</script>
 
 </body>
