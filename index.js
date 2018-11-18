@@ -70,7 +70,7 @@ app.get("/user/awards/index", ensureLoggedIn("/login"), async (req, res) => {
   if (req.user.administrator) res.redirect("/login");
   const client = await pool.connect();
   var result = await client.query(`
-    SELECT award_types.name as type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
+    SELECT award_types.type as type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
     FROM awards JOIN award_types ON awards.type_id = award_types.id
     JOIN users ON awards.user_id = users.id
   `);
@@ -409,7 +409,7 @@ app.get("/reset", async (req, res) => {
     await client.query(`
       CREATE TABLE award_types (
         id serial PRIMARY KEY,
-        name varchar(64) NOT NULL
+        type varchar(64) NOT NULL
       );
     `);
     await client.query(`

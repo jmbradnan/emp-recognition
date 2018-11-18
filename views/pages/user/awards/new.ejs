@@ -7,7 +7,7 @@
       <label for="type_id">Employee of the</label>
       <select class="form-control" name="type_id">
         <% for(var i=0; i<award_types.length; i++) {%>
-          <option value="<%= award_types[i].id %>"><%= award_types[i].name %></option>
+          <option value="<%= award_types[i].id %>"><%= award_types[i].type %></option>
         <% } %>
       </select>
     </div>

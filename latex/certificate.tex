@@ -1,24 +1,26 @@
-\documentclass[10pt, landscape]{article}
+\documentclass[10pt,landscape,english]{article}
 \usepackage{color}
 \usepackage{graphicx}
 \usepackage{pagecolor}
 \usepackage{ulem}
 \usepackage{datatool}
-\DTLloaddb{names}{namelist.csv}
+\usepackage{babel}
+\usepackage[useregional]{datetime2}
 
+\DTLloaddb{award}{cert_data.csv}
 
 \definecolor{azure(web)(azuremist)}{rgb}{0.94, 1.0, 1.0}
 \pagestyle{empty}
 
 \begin{document}
-\pagecolor{azure(web)(azuremist)}
-\DTLforeach{names}{\name=Name, \from=From}
+%\pagecolor{azure(web)(azuremist)}
+
+\DTLforeach{award}{\awardType=type, \name=name, \date=date, \fname=fname, \lname=lname}
 
 \begin{minipage}[c]{1\textwidth}
 \centerline{
-\fontfamily{ptm}\fontsize{1.2cm}{0.5cm}{\selectfont{\textit{ Employee of the Month }}}}
+\fontfamily{ptm}\fontsize{1.2cm}{0.5cm}{\selectfont{\textit{ Employee of the \awardType }}}}
 \end{minipage}
-
 
 \vskip2em
 \begin{minipage}[c]{12cm}
@@ -27,17 +29,9 @@
 \end{minipage}
 
 \vskip2em
-\begin{minipage}[c]{12cm}
-\centering{
-\LARGE{\textsl{awarded to}}}
-\end{minipage}
-
-
-\vskip2em
 \begin{minipage}[c]{1\textwidth}
 \centerline{
-\fontsize{2.0cm}{1.5cm}{\bfseries{\name}}
-}
+\fontsize{2.0cm}{1.5cm}{\bfseries{\name}}}
 \end{minipage}
 
 \vskip2em
@@ -50,13 +44,25 @@ your dedication, passion, and hard work}}}
 \vskip2em
 \begin{minipage}[c]{1\textwidth}
 \centering{
-\large{\textsl{given on October 31, 2018 by}}}
+\LARGE{\textsl{awarded by}}}
+\end{minipage}
+
+\vskip1em
+\begin{minipage}[c]{12cm}
+\centering
+\includegraphics[scale=0.10]{eSig}
 \end{minipage}
 
 \vskip2em
 \begin{minipage}[c]{1\textwidth}
 \centering
-\fontsize{1.2cm}{0.5cm}{\bfseries{\from}}
+\fontsize{1.2cm}{0.5cm}{\bfseries{\fname \lname}}
+\end{minipage}
+
+\vskip2em
+\begin{minipage}[c]{1\textwidth}
+\centering{
+\LARGE{\textsl{given on \DTMdate{\date}}}}
 \end{minipage}
 
 \end{document}
