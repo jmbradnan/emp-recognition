@@ -7,8 +7,8 @@ Browser.waitDuration = "50s";
 Browser.localhost("example.com", 5000);
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: process.env.DATABASE_URL
+  //ssl: true
 });
 
 describe("System", function() {
@@ -221,6 +221,29 @@ describe("System", function() {
 
     it("should be on the home page", function() {
       browser.assert.url({ pathname: "/user/awards/index" });
+    });
+  });
+
+  describe("Users can only see awards they created", function() {
+    before(function(done) {
+      browser.visit("/logout", done);
+    });
+
+    before(function(done) {
+      browser.fill("input[name=email]", "user2@user.com");
+      browser.fill("input[name=password]", "newpass");
+      browser.pressButton("Submit", done);
+    });
+
+    it("should be successful", function() {
+      browser.assert.success();
+    });
+
+    it("award should be deleted", function() {
+      assert.notEqual(
+        browser.text("tr:first-child td:nth-child(3)"),
+        "user@user.com"
+      );
     });
   });
 

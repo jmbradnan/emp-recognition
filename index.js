@@ -6,8 +6,8 @@ require("dotenv").config();
 
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: process.env.DATABASE_URL
+  //ssl: true
 });
 
 //require modules
@@ -66,11 +66,15 @@ app.locals.moment = moment;
 app.get("/user/awards/index", ensureLoggedIn("/login"), async (req, res) => {
   if (req.user.administrator) res.redirect("/login");
   const client = await pool.connect();
-  var result = await client.query(`
+  var result = await client.query(
+    `
     SELECT award_types.type as type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
     FROM awards JOIN award_types ON awards.type_id = award_types.id
     JOIN users ON awards.user_id = users.id
-  `);
+    WHERE users.id=($1)
+  `,
+    [req.user.id]
+  );
   const data = { awards: result ? result.rows : null, user: req.user };
   res.render("pages/user/awards/index", data);
   client.release();
@@ -504,8 +508,17 @@ app.get("/reset", async (req, res) => {
     "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
     [faker.name.firstName(), faker.name.lastName(), "user@user.com", "password"]
   );
+  var user2 = await client.query(
+    "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
+    [
+      faker.name.firstName(),
+      faker.name.lastName(),
+      "user2@user.com",
+      "password"
+    ]
+  );
   await client.query(
-    "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4), DEFAULT, DEFAULT, ($5)) RETURNING id",
+    "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4), DEFAULT, DEFAULT, ($5))",
     [
       faker.name.firstName(),
       faker.name.lastName(),
@@ -524,6 +537,17 @@ app.get("/reset", async (req, res) => {
     [
       type.rows[0].id,
       user.rows[0].id,
+      faker.name.findName(),
+      faker.internet.email(),
+      "13:45",
+      faker.date.past()
+    ]
+  );
+  await client.query(
+    "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
+    [
+      type.rows[0].id,
+      user2.rows[0].id,
       faker.name.findName(),
       faker.internet.email(),
       "13:45",
