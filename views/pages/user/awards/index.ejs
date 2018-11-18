@@ -26,7 +26,7 @@
           <td><%= moment(awards[i].time, 'HH:mm:ss').format('h:mm A') %></td>
           <td><%= awards[i].date.toLocaleDateString("en-US") %></td>
           <td>
-            <form action="/user/award/delete" method="post">
+            <form action="/user/awards/destroy" method="post">
               <input type="hidden" name="id" value="<%= awards[i].id %>">
               <button type="submit" class="btn btn-danger">Delete</button>
             </form>
