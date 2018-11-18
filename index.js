@@ -141,46 +141,6 @@ app.post("/user/name/update", ensureLoggedIn("/login"), async (req, res) => {
   client.release();
 });
 
-/*
- * Reporting Routes
- */
-// Display all awards as admin
-app.get("/displayAllAwards", async (req, res) => {
-  try {
-    const client = await pool.connect();
-    var queryResult = await client.query(`
-      SELECT award_types.type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
-      FROM awards JOIN award_types ON awards.type_id = award_types.id
-      JOIN users ON awards.user_id = users.id
-    `);
-    const results = { jsonData: queryResult ? queryResult.rows : null };
-    console.log(results);
-    res.send(results.jsonData);
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("Error: " + err);
-  }
-});
-
-app.get("/awardsOverTimeReport", async (req, res) => {
-  try {
-    const client = await pool.connect();
-    const queryResult = await client.query(`
-      SELECT award_types.type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
-      FROM awards JOIN award_types ON awards.type_id = award_types.id
-      JOIN users ON awards.user_id = users.id ORDER BY awards.date
-      `);
-    const results = { jsonData: queryResult ? queryResult.rows : null };
-    console.log(results);
-    res.send(results.jsonData);
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("Error: " + err);
-  }
-});
-
 
 /*
  * Admin Routes
@@ -348,6 +308,46 @@ app.get("/administration", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.send("error " + err);
+  }
+});
+
+/*
+ * Reporting Routes
+ */
+// Display all awards as admin
+app.get("/displayAllAwards", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    var queryResult = await client.query(`
+      SELECT award_types.type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
+      FROM awards JOIN award_types ON awards.type_id = award_types.id
+      JOIN users ON awards.user_id = users.id
+    `);
+    const results = { jsonData: queryResult ? queryResult.rows : null };
+    console.log(results);
+    res.send(results.jsonData);
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
+});
+
+app.get("/awardsOverTimeReport", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const queryResult = await client.query(`
+      SELECT award_types.type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
+      FROM awards JOIN award_types ON awards.type_id = award_types.id
+      JOIN users ON awards.user_id = users.id ORDER BY awards.date
+      `);
+    const results = { jsonData: queryResult ? queryResult.rows : null };
+    console.log(results);
+    res.send(results.jsonData);
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
   }
 });
 
