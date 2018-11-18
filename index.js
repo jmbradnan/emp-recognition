@@ -6,10 +6,9 @@ require("dotenv").config();
 
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-  //ssl: true
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
 });
-
 
 //require modules
 const http = require("http");
@@ -133,7 +132,6 @@ app.post("/user/name/update", ensureLoggedIn("/login"), async (req, res) => {
   res.redirect("/user/name/edit");
   client.release();
 });
-
 
 /*
  * Admin Routes
@@ -319,8 +317,9 @@ app.get("/administration", ensureLoggedIn("/login"), async (req, res) => {
  * Reporting Routes
  */
 // Display all awards as admin
-app.get("/displayAllAwards", async (req, res) => {
+app.get("/displayAllAwards", ensureLoggedIn("/login"), async (req, res) => {
   try {
+    if (!req.user.administrator) res.redirect("/login");
     const client = await pool.connect();
     var queryResult = await client.query(`
       SELECT award_types.type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
@@ -337,8 +336,9 @@ app.get("/displayAllAwards", async (req, res) => {
   }
 });
 
-app.get("/awardsOverTimeReport", async (req, res) => {
+app.get("/awardsOverTimeReport", ensureLoggedIn("/login"), async (req, res) => {
   try {
+    if (!req.user.administrator) res.redirect("/login");
     const client = await pool.connect();
     const queryResult = await client.query(`
       SELECT award_types.type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
