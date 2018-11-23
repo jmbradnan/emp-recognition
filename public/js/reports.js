@@ -37,6 +37,10 @@ function awardsOverTime() {
   });
 }
 
+function updateContentAreaSize() {
+    
+}
+
 function getAllAwardsChart(json) {
     var data = new google.visualization.DataTable();
     showFields('#report_area');
@@ -48,7 +52,7 @@ function getAllAwardsChart(json) {
     data.addColumn('string', 'Date');
     var table = new Array();
     for (i=0; i<json.length; i++) {
-        var sender = json[i]['user'];
+        var sender = json[i]['fname'] + " " + json[i]['lname'];
         var recipient = json[i]['name'];
         var email = json[i]['email'];
         var type = json[i]['type'];

@@ -48,7 +48,7 @@ function setIframeHeight(id) {
     ifrm.style.visibility = 'hidden';
     ifrm.style.height = "10px"; // reset to minimal height ...
     // IE opt. for bing/msn needs a bit added or scrollbar appears
-    ifrm.style.height = getDocHeight( doc ) + 400 + "px";
+    ifrm.style.height = getDocHeight( doc ) + 500 + "px";
     ifrm.style.visibility = 'visible';
 }
 
@@ -59,7 +59,7 @@ function setIframeHeight(id) {
 https://www.dyn-web.com/tutorials/iframes/height/
 -->
 <div class="container">
- 	<iframe id="admin_content-area" frameBorder="0" marginheight="50" class="embed-responsive-item"  width="500" onload="setIframeHeight(this.id)"></iframe>
+ 	<iframe id="admin_content-area" frameBorder="0" marginheight="50" class="embed-responsive-item" width="800" onload="setIframeHeight(this.id)"></iframe>
 </div>
 
 

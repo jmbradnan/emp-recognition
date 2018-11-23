@@ -5,10 +5,16 @@
 require("dotenv").config();
 
 const { Pool } = require("pg");
+// const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: true
+// });
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: "postgres://dev:ABC123@localhost/postgres",
+  ssl: false
 });
+
 
 //require modules
 const http = require("http");
@@ -334,7 +340,7 @@ app.get("/displayAllAwards", ensureLoggedIn("/login"), async (req, res) => {
     if (!req.user.administrator) res.redirect("/login");
     const client = await pool.connect();
     var queryResult = await client.query(`
-      SELECT award_types.type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
+      SELECT award_types.type, users.email as user, users.fname as fname, users.lname as lname, awards.id, awards.name, awards.email, awards.time, awards.date
       FROM awards JOIN award_types ON awards.type_id = award_types.id
       JOIN users ON awards.user_id = users.id
     `);
@@ -463,6 +469,50 @@ app.post("/password/update", async (req, res) => {
   res.redirect("/login");
 });
 
+//populate data
+app.get("/populate", ensureLoggedIn("/login"), async (req, res) => {
+  try {
+    if (!req.user.administrator) res.redirect("/login");
+// app.get("/populate", async (req, res) => {
+  const client = await pool.connect();
+
+  for (i=0; i<10; i++)
+  {
+    var fName = faker.name.firstName();
+    var lName = faker.name.lastName()
+    var email = `${fName}.${lName}@user.com`;
+    var password =  `password`;
+
+    var user = await client.query(
+      "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
+      [fName, lName, email, password]
+    );
+
+    var times = Math.floor(Math.random() * (10-1+1)) + 1;
+    for (j = 0; j< times; j++) {
+      var val = Math.floor(Math.random() * (100-1)) + 1;
+      var type = (val%2 === 0) ? "1" : "2";
+      await client.query(
+      "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
+        [
+          type,
+          user.rows[0].id,
+          faker.name.findName(),
+          faker.internet.email(),
+          "13:45",
+          faker.date.past()
+        ]
+      );
+    }
+  }
+  // res.render("/", { user: null });
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
+});
+
 //reset and set database
 app.get("/reset", async (req, res) => {
   const client = await pool.connect();
@@ -503,7 +553,7 @@ app.get("/reset", async (req, res) => {
     );
   `);
 
-  //seed database
+//seed database
   var user = await client.query(
     "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
     [faker.name.firstName(), faker.name.lastName(), "user@user.com", "password"]
