@@ -43,7 +43,7 @@
 				<input id="inputPassword" type="password" class="form-control" name="password" placeholder="Password" required>
 			</div>
 		</div>
-		<!-- Administrator? -->
+		<!-- Administrator -->
 		<div class="form-group">
 			<div class="col-sm-10">
 				<input id="administratorCheck" type="checkbox"/>
@@ -53,19 +53,16 @@
 		</div>
 		<br>
 
-		<!-- Hidden Fields -->
-	  	<input type="text" style="visibility:hidden" class="input-field" name="signature" id="user_signature_initial">
-
-
 
 		<!-- Signature Entry -->
 		<div id="enter_signature" class="form-group">
 		<label>Draw signature below</label>
     	<div class="wrapper">
-      	<canvas id="signature-pad" class="signature-pad" width=400 height=300></canvas>
+      	<canvas id="signature-pad" class="signature-pad" width=200 height=100></canvas>
     	</div>
-		
+		<br>
     	<button type="button" onclick="createSignature()">Save Signature</button>
+		<button type="button" id="clear" onclick="clearSignature()">Clear</button>
 		</div>
 		
 	  	<!-- Signature Display -->
@@ -74,7 +71,12 @@
 		<img id="new_signature">
 		</div>
 
-		<input type="submit" class="col-sm-2 float-right" name="Add User" value="Add User">
+		<input type="submit" class="col-sm-2" name="Add User" value="Add User">
+
+		
+		<!-- Hidden Fields -->
+	  	<input type="text" style="visibility:hidden" class="input-field" name="signature" id="user_signature_initial">
+
 		</form>	
 	</div>
 	</fieldset>

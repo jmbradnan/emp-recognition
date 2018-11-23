@@ -10,11 +10,15 @@ document.getElementById('save-png').addEventListener('click', function () {
   
   var data = signaturePad.toDataURL('image/png');
   $("#user_signature_edit").val(data);
-  // console.log(data);
   $("#signature_image").attr("src", data);
   hideFields('#editable_user_signature');
   showFields('#editable_user_fields');
 });
+
+
+function clearSignature() {
+  signaturePad.clear();
+}
 
 /*
 Select a user
@@ -25,7 +29,6 @@ function selectUser(id) {
     if(response.ok) {
       response.json().then(function(json) {
         var data = json[0];
-        // console.log(data);
         $("#user_id_edit").val(id);
         $("#user_fname_edit").val(data.fname);
         $("#user_lname_edit").val(data.lname);

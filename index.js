@@ -505,7 +505,7 @@ app.get("/populate", ensureLoggedIn("/login"), async (req, res) => {
       );
     }
   }
-  // res.render("/", { user: null });
+  res.render("pages/populate", { user: null });
     client.release();
   } catch (err) {
     console.error(err);

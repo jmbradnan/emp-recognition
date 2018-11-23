@@ -37,10 +37,6 @@ function awardsOverTime() {
   });
 }
 
-function updateContentAreaSize() {
-    
-}
-
 function getAllAwardsChart(json) {
     var data = new google.visualization.DataTable();
     showFields('#report_area');
@@ -64,8 +60,15 @@ function getAllAwardsChart(json) {
      data.addRows(table);
      // Instantiate and draw our chart, passing in some options.
     var chart = new google.visualization.Table(document.getElementById('report'));
-    chart.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+    chart.draw(data, {'title':'All Awards Issued', showRowNumber: true, width: '100%', height: '100%'});
 }
+
+        // var options = {'title':'Awards by month',
+        //   curveType: 'function',
+        //    'width':400,
+        //    'height':300,
+        //   legend: { position: 'bottom' }
+        // };
 
 function getAwardsOverTimeChart(json) {
     var data = new google.visualization.DataTable();
@@ -136,7 +139,7 @@ function getAwardsOverTimeChart(json) {
 function getAwardsCreatedChart(json) {
     var data = new google.visualization.DataTable();
   
-    showFields('#report_area')
+    showFields('#report_area');
     data.addColumn('string', 'Name');
     data.addColumn('number', 'count');
 
