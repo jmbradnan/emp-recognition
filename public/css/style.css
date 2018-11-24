@@ -9,8 +9,11 @@
 
 iframe {
 margin-top: 30px;
-
 }
+
+canvas {
+    border: 1px solid darkgray;
+}  
 
 .starthidden {
     display:none;

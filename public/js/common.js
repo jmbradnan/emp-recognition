@@ -6,7 +6,6 @@
   common.js contains common scripts for the Employee Recognition app
 */
 
-
 //reveal hidden fieldset
 function showFields(identifier) {
   $(identifier).show();
@@ -29,4 +28,9 @@ function queryBuilder(keyName, idkey, fields) {
     query += fields[i].value;
   }
   return query;
+}
+
+// Clear signature from signature-pad
+function clearSignature() {
+  signaturePad.clear();
 }
