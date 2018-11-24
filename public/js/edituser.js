@@ -1,13 +1,23 @@
+/*
+  Employee-Recognition: edituser.js
+  Jackie Bradnan
+  Oct 14, 2018
+
+  edituser.js contains script to update and existing user.
+*/
+
+/*
+  Set up signature pad.
+*/
 var canvas2 = document.getElementById('signature-pad2');
 var signaturePad = new SignaturePad(canvas2, {
 });
-
 
 document.getElementById('save-png').addEventListener('click', function () {
   if (signaturePad.isEmpty()) {
     return alert("Please provide a signature first.");
   }
-  
+
   var data = signaturePad.toDataURL('image/png');
   $("#user_signature_edit").val(data);
   $("#signature_image").attr("src", data);
@@ -15,19 +25,14 @@ document.getElementById('save-png').addEventListener('click', function () {
   showFields('#editable_user_fields');
 });
 
-
-function clearSignature() {
-  signaturePad.clear();
-}
-
 /*
-Select a user
+  Select a user
 */
 function selectUser(id) {
   var url = "/get-user" + "?id=" + id;
-  fetch(url).then(function(response) {
-    if(response.ok) {
-      response.json().then(function(json) {
+  fetch(url).then(function (response) {
+    if (response.ok) {
+      response.json().then(function (json) {
         var data = json[0];
         $("#user_id_edit").val(id);
         $("#user_fname_edit").val(data.fname);
@@ -45,16 +50,15 @@ function selectUser(id) {
   });
 }
 
-
 /*
-Delete user
+  Delete user
 */
 function deleteUser() {
   var fields = $("#editable_user_fields .input-field");
   var id = $('#user_id_edit').val();
   var query = "/delete-user" + queryBuilder("id", id, fields);
-  fetch(query).then(function(response) {
-    if(response.ok) {
+  fetch(query).then(function (response) {
+    if (response.ok) {
       console.log("ok");
     } else {
       console.log("error");
@@ -63,7 +67,7 @@ function deleteUser() {
 }
 
 /* 
-This method sets the user id and shows additional properties for that user
+  This method sets the user id and shows additional properties for that user
 */
 function editUser() {
   hideFields($('#new_user_fields'));
@@ -75,23 +79,10 @@ function editUser() {
   showFields('#editable_user_fields')
 }
 
+/*
+  Hides main form fields and shows update signature fields.
+*/
 function updateSignature() {
   hideFields('#editable_user_fields');
   showFields('#editable_user_signature');
-}
-
-/*
-Delete user
-*/
-function deleteUser() {
-  var fields = $("#editable_user_fields .input-field");
-  var id = $('#user_id_edit').val();
-  var query = "/delete-user" + queryBuilder("id", id, fields);
-  fetch(query).then(function(response) {
-    if(response.ok) {
-      console.log("ok");
-    } else {
-      console.log("error");
-    }
-  });
 }

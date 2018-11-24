@@ -5,16 +5,10 @@
 require("dotenv").config();
 
 const { Pool } = require("pg");
-// const pool = new Pool({
-//   connectionString: process.env.DATABASE_URL,
-//   ssl: true
-// });
-
 const pool = new Pool({
-  connectionString: "postgres://dev:ABC123@localhost/postgres",
-  ssl: false
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
 });
-
 
 //require modules
 const http = require("http");
@@ -59,7 +53,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(require("connect-flash")());
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.locals.messages = require("express-messages")(req, res);
   next();
 });
@@ -173,6 +167,24 @@ app.get("/awardsCreatedReport", ensureLoggedIn("/login"), async (req, res) => {
   }
 });
 
+app.get("/displayAllUsers", ensureLoggedIn("/login"), async (req, res) => {
+  try {
+    if (!req.user.administrator) res.redirect("/login");
+    const client = await pool.connect();
+    const queryResult = await client.query(`
+      SELECT *
+      FROM users
+      `);
+    const results = { jsonData: queryResult ? queryResult.rows : null };
+    console.log(results);
+    res.send(results.jsonData);
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
+});
+
 app.get("/displayusers", ensureLoggedIn("/login"), async (req, res) => {
   try {
     if (!req.user.administrator) res.redirect("/login");
@@ -268,7 +280,7 @@ app.get("/delete-user", ensureLoggedIn("/login"), async (req, res) => {
 });
 
 // update user info
-app.post("/update-user", ensureLoggedIn("/login"), function(req, res) {
+app.post("/update-user", ensureLoggedIn("/login"), function (req, res) {
   if (!req.user.administrator) res.redirect("/login");
   var data = [
     req.body.id,
@@ -281,7 +293,7 @@ app.post("/update-user", ensureLoggedIn("/login"), function(req, res) {
   console.log(data);
   var sql =
     "UPDATE users SET fname=($2), lname=($3), email=($4), password=($5), signature=($6) WHERE id=($1)";
-  pool.query(sql, data, function(err, result) {
+  pool.query(sql, data, function (err, result) {
     if (err) {
       console.error(err);
     }
@@ -291,7 +303,7 @@ app.post("/update-user", ensureLoggedIn("/login"), function(req, res) {
 });
 
 // add a new user
-app.post("/new-user", ensureLoggedIn("/login"), function(req, res) {
+app.post("/new-user", ensureLoggedIn("/login"), function (req, res) {
   if (!req.user.administrator) res.redirect("/login");
   var admin = req.body.administrator;
   var isAdmin = admin === "true" ? true : false;
@@ -306,7 +318,7 @@ app.post("/new-user", ensureLoggedIn("/login"), function(req, res) {
   console.log(data);
   var sql =
     "INSERT INTO users (fname, lname, email, password, signature, administrator) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id";
-  pool.query(sql, data, function(err, result) {
+  pool.query(sql, data, function (err, result) {
     if (err) {
       console.error(err);
     }
@@ -395,14 +407,14 @@ app.get("/login", async (req, res) => {
 app.post(
   "/login/validate",
   passport.authenticate("local", { failureRedirect: "/login" }),
-  function(req, res) {
+  function (req, res) {
     req.flash("info", "Logged In");
     res.redirect("/login");
   }
 );
 
 //logout
-app.get("/logout", ensureLoggedIn("/login"), function(req, res) {
+app.get("/logout", ensureLoggedIn("/login"), function (req, res) {
   req.logout();
   req.flash("info", "Logged Out");
   res.redirect("/login");
@@ -473,39 +485,38 @@ app.post("/password/update", async (req, res) => {
 app.get("/populate", ensureLoggedIn("/login"), async (req, res) => {
   try {
     if (!req.user.administrator) res.redirect("/login");
-// app.get("/populate", async (req, res) => {
-  const client = await pool.connect();
+    // app.get("/populate", async (req, res) => {
+    const client = await pool.connect();
 
-  for (i=0; i<10; i++)
-  {
-    var fName = faker.name.firstName();
-    var lName = faker.name.lastName()
-    var email = `${fName}.${lName}@user.com`;
-    var password =  `password`;
+    for (i = 0; i < 10; i++) {
+      var fName = faker.name.firstName();
+      var lName = faker.name.lastName()
+      var email = `${fName}.${lName}@user.com`;
+      var password = `password`;
 
-    var user = await client.query(
-      "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
-      [fName, lName, email, password]
-    );
-
-    var times = Math.floor(Math.random() * (10-1+1)) + 1;
-    for (j = 0; j< times; j++) {
-      var val = Math.floor(Math.random() * (100-1)) + 1;
-      var type = (val%2 === 0) ? "1" : "2";
-      await client.query(
-      "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
-        [
-          type,
-          user.rows[0].id,
-          faker.name.findName(),
-          faker.internet.email(),
-          "13:45",
-          faker.date.past()
-        ]
+      var user = await client.query(
+        "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
+        [fName, lName, email, password]
       );
+
+      var times = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
+      for (j = 0; j < times; j++) {
+        var val = Math.floor(Math.random() * (100 - 1)) + 1;
+        var type = (val % 2 === 0) ? "1" : "2";
+        await client.query(
+          "INSERT INTO awards VALUES(DEFAULT, ($1), ($2), ($3), ($4), ($5), ($6))",
+          [
+            type,
+            user.rows[0].id,
+            faker.name.findName(),
+            faker.internet.email(),
+            "13:45",
+            faker.date.past()
+          ]
+        );
+      }
     }
-  }
-  res.render("pages/populate", { user: null });
+    res.render("pages/populate", { user: null });
     client.release();
   } catch (err) {
     console.error(err);
@@ -553,7 +564,7 @@ app.get("/reset", async (req, res) => {
     );
   `);
 
-//seed database
+  //seed database
   var user = await client.query(
     "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
     [faker.name.firstName(), faker.name.lastName(), "user@user.com", "password"]
@@ -609,17 +620,17 @@ app.get("/reset", async (req, res) => {
   client.release();
 });
 
-app.use(function(req, res) {
+app.use(function (req, res) {
   res.status(404);
   res.render("404");
 });
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   console.error(err.stack);
   res.status(500);
   res.render("500");
 });
 
-app.listen(app.get("port"), function() {
+app.listen(app.get("port"), function () {
   console.log("Node app is running at localhost:" + app.get("port"));
 });
