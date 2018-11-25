@@ -9,11 +9,11 @@
 
 \DTLloaddb{award}{cert_data.csv}
 
-\definecolor{azure(web)(azuremist)}{rgb}{0.94, 1.0, 1.0}
+\definecolor{ivory}{rgb}{1.0, 1.0, 0.94}
 \pagestyle{empty}
 
 \begin{document}
-%\pagecolor{azure(web)(azuremist)}
+\pagecolor{ivory}
 
 \DTLforeach{award}{\awardType=type, \name=name, \date=date, \fname=fname, \lname=lname}
 
@@ -47,16 +47,16 @@ your dedication, passion, and hard work}}}
 \LARGE{\textsl{awarded by}}}
 \end{minipage}
 
-\vskip1em
+%\vskip1em
 \begin{minipage}[c]{12cm}
 \centering
-\includegraphics[scale=0.10]{eSig}
+\includegraphics[scale=0.50]{eSig}
 \end{minipage}
 
-\vskip2em
+%\vskip2em
 \begin{minipage}[c]{1\textwidth}
 \centering
-\fontsize{1.2cm}{0.5cm}{\bfseries{\fname \lname}}
+\fontsize{1.2cm}{0.5cm}{\bfseries{\fname} {\lname}}
 \end{minipage}
 
 \vskip2em

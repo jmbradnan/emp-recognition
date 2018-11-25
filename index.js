@@ -6,8 +6,8 @@ require("dotenv").config();
 
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+ connectionString: "postgres://postgres:password@localhost:5432/postgres",
+ ssl: false
 });
 
 //require modules
