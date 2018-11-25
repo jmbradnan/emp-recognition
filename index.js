@@ -21,6 +21,7 @@ var engine = require("ejs-mate");
 var crypto = require("crypto");
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const fs = require("fs");
 
 //set up passport
 var ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn;
