@@ -86,3 +86,5 @@ function updateSignature() {
   hideFields('#editable_user_fields');
   showFields('#editable_user_signature');
 }
+
+

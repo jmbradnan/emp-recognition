@@ -19,6 +19,13 @@ canvas {
     display:none;
 }
 
+.visible {
+    visibility: visible;
+  }
+  .invisible {
+    visibility: hidden;
+  }
+
 #error_text {
     color: red;
     font-size: 200%;

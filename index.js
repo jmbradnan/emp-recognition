@@ -59,6 +59,8 @@ app.use(function (req, res, next) {
 });
 app.locals.moment = moment;
 
+const defaultSignature = "data:image/png;base64,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";
+
 /*
  * User Routes
  */
@@ -495,8 +497,8 @@ app.get("/populate", ensureLoggedIn("/login"), async (req, res) => {
       var password = `password`;
 
       var user = await client.query(
-        "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
-        [fName, lName, email, password]
+        "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4), DEFAULT, ($5)) RETURNING id",
+        [fName, lName, email, password, defaultSignature]
       );
 
       var times = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
@@ -548,7 +550,7 @@ app.get("/reset", async (req, res) => {
       email text NOT NULL,
       password text NOT NULL,
       reset_token varchar(64),
-      signature text,
+      signature text NOT NULL,
       administrator bool NOT NULL DEFAULT FALSE
     );
   `);
@@ -566,25 +568,27 @@ app.get("/reset", async (req, res) => {
 
   //seed database
   var user = await client.query(
-    "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
-    [faker.name.firstName(), faker.name.lastName(), "user@user.com", "password"]
+    "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4), DEFAULT, ($5)) RETURNING id",
+    [faker.name.firstName(), faker.name.lastName(), "user@user.com", "password", defaultSignature]
   );
   var user2 = await client.query(
-    "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4)) RETURNING id",
+    "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4), DEFAULT, ($5)) RETURNING id",
     [
       faker.name.firstName(),
       faker.name.lastName(),
       "user2@user.com",
-      "password"
+      "password",
+      defaultSignature
     ]
   );
   await client.query(
-    "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4), DEFAULT, DEFAULT, ($5))",
+    "INSERT INTO users VALUES(DEFAULT, ($1), ($2), ($3), ($4), DEFAULT, ($5), ($6))",
     [
       faker.name.firstName(),
       faker.name.lastName(),
       "admin@admin.com",
       "password",
+      defaultSignature,
       true
     ]
   );
