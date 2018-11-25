@@ -116,6 +116,38 @@ app.post("/user/awards/create", ensureLoggedIn("/login"), async (req, res) => {
       req.body.date
     ]
   );
+  //run database to latex to email functionality
+  var childProcess = require('child_process');
+  function runScript(scriptPath, callback) {
+    var invoked = false;
+    var process = childProcess.fork(scriptPath);
+    process.on('error', function (err) {
+        if (invoked) return;
+        invoked = true;
+        callback(err);
+    });
+
+    process.on('exit', function (code) {
+        if (invoked) return;
+        invoked = true;
+        var err = code === 0 ? null : new Error('exit code ' + code);
+        callback(err);
+    });
+  }
+  //run script for exporting from database
+  runScript('./latex/script01.js', function (err) {
+      if (err) throw err;
+  });
+  //run script for certificate creation with latex and sending of email
+  runScript('./latex/script02.js', function (err) {
+      if (err) throw err;
+      fs.readFile('./latex/preview_URL.txt', 'utf8', function read(err, data) {
+        if (err) {
+          throw err;
+        }
+        confirmation = data;
+      })
+  }); //end of db to latex to email
   req.flash("info", "Award Created");
   res.redirect("/user/awards/index");
   client.release();
