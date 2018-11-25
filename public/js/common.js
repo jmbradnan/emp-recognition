@@ -34,3 +34,14 @@ function queryBuilder(keyName, idkey, fields) {
 function clearSignature() {
   signaturePad.clear();
 }
+
+function displayError(error) {
+  error = error.replace(/\r?\n/g, '<br />');
+  var errordiv = document.getElementById("error_text");
+  errordiv.innerHTML = error;
+}
+
+function clearError() {
+  var errordiv = document.getElementById("error_text");
+  errordiv.innerHTML = "";
+}

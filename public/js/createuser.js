@@ -29,5 +29,23 @@ function createSignature() {
   $("#new_signature").attr("src", data);
 
   hideFields('#enter_signature');
+  $("#error_text").addClass("invisible");
   showFields('#hidden_signature');
+}
+
+/*
+ Check form compliance before submission.
+ */
+function checkform()
+{
+  var signature = $('#user_signature_initial').val();
+	if (signature === '' || signature === undefined)
+	{
+    // something is wrong
+    displayError("Please enter a signature");
+   $("#error_text").removeClass("invisible");
+		return false;
+	}
+  $("#error_text").addClass("invisible");
+	return true;
 }

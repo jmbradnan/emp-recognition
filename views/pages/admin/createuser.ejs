@@ -20,7 +20,7 @@
 	<fieldset id="new_user_fields">
 		<div class="container">
 			<h5>New User Information</h5>
-			<form class="form-horizontal" method="post" id="newUserForm" action="/new-user">
+			<form class="form-horizontal" method="post" id="newUserForm" onSubmit="return checkform()" action="/new-user">
 				<!-- First Name -->
 				<div class="form-group">
 					<label for="inputFirstName" class="col-sm-2 control-label">First Name</label>
@@ -77,10 +77,12 @@
 				</div>
 
 				<input type="submit" class="col-sm-2" name="Add User" value="Add User">
+				<br>
+
 
 				<!-- Hidden Fields -->
 				<input type="text" style="visibility:hidden" class="input-field" name="signature" id="user_signature_initial">
-
+				<div id="error_text" class="alert alert-danger invisible" ></div>
 			</form>
 		</div>
 	</fieldset>
