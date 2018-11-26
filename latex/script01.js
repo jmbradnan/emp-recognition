@@ -1,4 +1,5 @@
-const pg = require('pg');
+require("dotenv").config();
+
 const fs = require('fs');
 const copyTo = require('pg-copy-streams').to;
 
@@ -9,8 +10,8 @@ const export_csv = fs.createWriteStream(__dirname + '/cert_data.csv'); //write c
 
 const { Pool } = require("pg");
 const pool = new Pool({
- connectionString: "postgres://lszxgtdwwniwwq:1d2225888a02606eb86d32787576c7db3dd4786b1fcf6508cb1fc27e7cef435e@ec2-54-243-147-162.compute-1.amazonaws.com:5432/dbi0l4fuki7pgh",
- ssl:true
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
 });
 
 pool.connect(function(err, client, done) {
