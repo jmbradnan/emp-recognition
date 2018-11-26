@@ -6,8 +6,8 @@ require("dotenv").config();
 
 const { Pool } = require("pg");
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
+  connectionString: process.env.DATABASE_URL
+ // ssl: true
 });
 
 //require modules
@@ -19,6 +19,7 @@ var faker = require("faker");
 var moment = require("moment");
 var engine = require("ejs-mate");
 var crypto = require("crypto");
+var session = require("express-session");
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -43,13 +44,14 @@ app.set("view engine", "ejs");
 app.use(require("morgan")("tiny"));
 app.use(require("cookie-parser")());
 app.use(require("body-parser").urlencoded({ extended: true }));
-app.use(
-  require("express-session")({
-    secret: "keyboard cat",
-    resave: false,
-    saveUninitialized: false
-  })
-);
+app.use(session({
+  store: new (require('connect-pg-simple')(session))(),
+  secret: "keyboard cat",
+  resave: false,
+  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days
+  saveUninitialized: false
+}));
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(require("connect-flash")());
@@ -268,6 +270,9 @@ app.get("/delete-user", ensureLoggedIn("/login"), async (req, res) => {
   try {
     if (!req.user.administrator) res.redirect("/login");
     const client = await pool.connect();
+    await client.query(`
+      DELETE FROM session where sess -> 'passport' ->> 'user' = ($1);
+    `, [req.query.id]);
     const queryResult = await client.query("DELETE FROM users WHERE id=($1)", [
       req.query.id
     ]);
@@ -529,11 +534,22 @@ app.get("/reset", async (req, res) => {
   const client = await pool.connect();
 
   //drop tables if exist
+  await client.query("DROP TABLE IF EXISTS session CASCADE;");
   await client.query("DROP TABLE IF EXISTS award_types CASCADE;");
   await client.query("DROP TABLE IF EXISTS users CASCADE;");
   await client.query("DROP TABLE IF EXISTS awards CASCADE;");
 
   //create tables
+  await client.query(`
+    CREATE TABLE "session" (
+      "sid" varchar NOT NULL COLLATE "default",
+      "sess" json NOT NULL,
+      "expire" timestamp(6) NOT NULL
+    )
+    WITH (OIDS=FALSE);
+    ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+  `);
+
   await client.query(`
     CREATE TABLE award_types (
       id serial PRIMARY KEY,
