@@ -71,6 +71,66 @@ function awardsOverTime() {
 }
 
 /*
+  Allows searching for specific user and showing their awards.
+*/
+function userSearchUX() {
+    showFields("#report_area");
+    showFields("#search");
+}
+
+// function searchForClient() {
+//     hideFields($('#new_client_fields'));
+//     hideFields($('#select_client'));
+
+//     //http://stackoverflow.com/questions/12340789/split-first-name-and-last-name-using-javascript
+//     var fullName = $('#name_search').val().split(' ');
+//     fname = fullName[0],
+//     lname = fullName[fullName.length - 1];
+//     var req = new XMLHttpRequest();
+//     req.open('GET', '/get-client-by-name' + "?fname=" + fname + "&lname=" + lname, false);
+//     req.send();
+//     var response = JSON.parse(req.responseText);
+//     var data = JSON.parse(req.responseText);
+
+//     if (response[0] == undefined)
+//     {
+//       displayError("Client not found.");
+//     } else {
+//       console.log("Client found");
+//       myClient=response[0].idclient;
+
+//     //display all previous visits for this client
+//     req = new XMLHttpRequest();
+//     req.open('GET', '/get-client-visits' + "?idclient=" + myClient, false);
+//     req.send();
+//     response = JSON.parse(req.responseText);
+//     source = $("#appointment_report_template").html();
+//     template = Handlebars.compile(source);
+//     $("#appointments_found").append(template({ objects: response }));
+//     showFields($('#appointments_found'));
+//     //show/hide appropriate fields
+//     showFields($('#client_found'));
+//     }
+//   }
+
+function searchForUser() {
+    var fullName = $('#name_search').val().split(' ');
+    fname = fullName[0],
+        lname = fullName[fullName.length - 1];
+    var url = "/searchForUser" + "?fname=" + fname + "&lname=" + lname;
+    fetch(url).then(function (response) {
+        if (response.ok) {
+            response.json().then(function (json) {
+                console.log(json);
+                // getAwardsOverTimeChart(json);
+            });
+        } else {
+            console.log("error");
+        }
+    });     
+}
+
+/*
   Renders table showing all users
 */
 function getAllUsersChart(json) {
