@@ -5,16 +5,10 @@
 require("dotenv").config();
 
 const { Pool } = require("pg");
-// const pool = new Pool({
-//   connectionString: process.env.DATABASE_URL,
-//   ssl: true
-// });
-
 const pool = new Pool({
-  connectionString: "postgres://dev:ABC123@localhost/postgres",
-  ssl: false
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
 });
-
 
 //require modules
 const http = require("http");
@@ -243,16 +237,6 @@ app.get("/reports", ensureLoggedIn("/login"), async (req, res) => {
   }
 });
 
-// app.get("/search", ensureLoggedIn("/login"), async (req, res) => {
-//   try {
-//     if (!req.user.administrator) res.redirect("/login");
-//     res.render("pages/admin/search");
-//   } catch (err) {
-//     console.error(err);
-//     res.send("error " + err);
-//   }
-// });
-
 // get user fields by id
 app.get("/get-user", ensureLoggedIn("/login"), async (req, res) => {
   console.log(req.query.id);
@@ -352,7 +336,7 @@ app.get("/administration", ensureLoggedIn("/login"), async (req, res) => {
 /*
  * Reporting Routes
  */
-
+// search for user by name
 app.get("/searchForUser", ensureLoggedIn("/login"), async (req, res) => {
   try {
     if (!req.user.administrator) res.redirect("/login");
@@ -363,6 +347,29 @@ app.get("/searchForUser", ensureLoggedIn("/login"), async (req, res) => {
     var queryResult = await client.query(`
       SELECT id FROM users WHERE fname=($1) AND lname=($2)
     `, [first, last]);
+    const results = { jsonData: queryResult ? queryResult.rows : null };
+    console.log(results);
+    res.send(results.jsonData);
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error: " + err);
+  }
+});
+
+// get awards data for user by id
+app.get("/getUserAwardsReport", ensureLoggedIn("/login"), async (req, res) => {
+  try {
+    if (!req.user.administrator) res.redirect("/login");
+    const client = await pool.connect();
+    console.log(req.query);
+    var id = req.query['id'];
+    var queryResult = await client.query(`
+    SELECT award_types.type as type, users.email as user, awards.id, awards.name, awards.email, awards.time, awards.date
+    FROM awards JOIN award_types ON awards.type_id = award_types.id
+    JOIN users ON awards.user_id = users.id
+    WHERE users.id=($1)
+    `, [id]);
     const results = { jsonData: queryResult ? queryResult.rows : null };
     console.log(results);
     res.send(results.jsonData);

@@ -44,27 +44,30 @@
 						<label class="col-sm-4 control-label">Name: <input type="text" class="input-field" id="name_search" required></label>
 						<input type="button" id="search_btn" value="search" onclick="searchForUser()">
 					</div>
+					<div id="error_text" class="alert alert-warning invisible"></div>
 				</div>
-				<div id="report"></div>
 			</fieldset>
+		</div>
+		<div id="report"></div>
+	</fieldset>
 
-			<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-			 crossorigin="anonymous"></script>
-			<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-			 crossorigin="anonymous"></script>
-			<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+	 crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+	 crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-			 crossorigin="anonymous"></script>
-			<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-			<script src="https://cdn.jsdelivr.net/momentjs/2.13.0/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+	 crossorigin="anonymous"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script src="https://cdn.jsdelivr.net/momentjs/2.13.0/moment.min.js"></script>
 
-			<script src="/js/common.js"></script>
-			<script src="/js/reports.js"></script>
-			<script type="text/javascript">
-				google.charts.load('current', { packages: ['corechart'] });
-				google.charts.load('current', { 'packages': ['table'] });
-			</script>
+	<script src="/js/common.js"></script>
+	<script src="/js/reports.js"></script>
+	<script type="text/javascript">
+		google.charts.load('current', { packages: ['corechart'] });
+		google.charts.load('current', { 'packages': ['table'] });
+	</script>
 
 </body>
 
