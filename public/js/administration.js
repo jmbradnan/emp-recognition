@@ -14,6 +14,11 @@ $(document).ready(function () {
   });
 });
 
+function initialPageView() {
+  $("#reportsNavigation").addClass("highlighted");
+  reportsDisplay();
+}
+
 /* 
  Displays users
 */

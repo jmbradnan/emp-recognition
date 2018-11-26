@@ -10,6 +10,7 @@
   Gets data for all users report, calls function to render chart
 */
 function displayAllUsers() {
+    hideFields("#search");
     var url = "/displayAllUsers";
     fetch(url).then(function (response) {
         if (response.ok) {
@@ -26,6 +27,7 @@ function displayAllUsers() {
   Gets data for all awards report, calls function to render chart
 */
 function displayAllAwards() {
+    hideFields("#search");
     var url = "/displayAllAwards";
     fetch(url).then(function (response) {
         if (response.ok) {
@@ -42,6 +44,7 @@ function displayAllAwards() {
   Gets data for distribution of awards created report, calls function to render chart
 */
 function awardsCreated() {
+    hideFields("#search");
     var url = "/awardsCreatedReport";
     fetch(url).then(function (response) {
         if (response.ok) {
@@ -58,11 +61,91 @@ function awardsCreated() {
   Gets data for all awards over report, calls function to render chart
 */
 function awardsOverTime() {
+    hideFields("#search");
     var url = "/awardsOverTimeReport";
     fetch(url).then(function (response) {
         if (response.ok) {
             response.json().then(function (json) {
                 getAwardsOverTimeChart(json);
+            });
+        } else {
+            console.log("error");
+        }
+    });
+}
+
+/*
+  Allows searching for specific user and showing their awards.
+*/
+function userSearchUX() {
+    $('#report').empty();
+    showFields("#report_area");
+    showFields("#search");
+}
+
+/*
+  Search for a user whose awards you want to see.
+*/
+function searchForUser() {
+    $("#error_text").addClass("invisible");
+    var fullName = $('#name_search').val().split(' ');
+    fname = fullName[0],
+        lname = fullName[fullName.length - 1];
+    var url = "/searchForUser" + "?fname=" + fname + "&lname=" + lname;
+    fetch(url).then(function (response) {
+        if (response.ok) {
+            response.json().then(function (json) {
+                console.log(json);
+                if (json.length > 0) {
+                    var id = json[0]['id'];
+                    getUserAwards(id);
+                } else {
+                    displayError("No user found with that name");
+                    $("#error_text").removeClass("invisible");
+                }
+            });
+        } else {
+            console.log("error");
+        }
+    });     
+}
+
+/*
+  Retrieve awards for specific user
+*/
+function getUserAwards(id) {
+    $("#error_text").addClass("invisible");
+    var url = "/getUserAwardsReport" + "?id=" + id;
+    fetch(url).then(function (response) {
+        if (response.ok) {
+            response.json().then(function (json) {
+                if (json.length > 0) {
+                    hideFields("#search");
+                    var data = new google.visualization.DataTable();
+                    showFields('#report_area');
+                    data.addColumn('string', 'Name');
+                    data.addColumn('string', 'Email');
+                    data.addColumn('string', 'Award-Type');
+                    data.addColumn('string', 'Time');
+                    data.addColumn('string', 'Date');
+                    var table = new Array();
+                    for (i = 0; i < json.length; i++) {
+                        var recipient = json[i]['name'];
+                        var email = json[i]['email'];
+                        var type = json[i]['type'];
+                        var time = moment(json[i]['time'], 'HH:mm:ss').format('h:mm A');
+                        var date = json[i]['date'].split("T");
+                        var dateShortened = date[0];
+                        table.push([recipient, email, type, time, dateShortened]);
+                    }
+                    data.addRows(table);
+                    // Instantiate and draw our chart, passing in some options.
+                    var chart = new google.visualization.Table(document.getElementById('report'));
+                    chart.draw(data, { 'title': 'All Awards Issued', showRowNumber: true, width: '100%', height: '100%' });
+                } else {
+                    displayError("This user has no awards given.");
+                    $("#error_text").removeClass("invisible");
+                }
             });
         } else {
             console.log("error");
