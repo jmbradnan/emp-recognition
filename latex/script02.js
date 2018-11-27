@@ -2,7 +2,7 @@ const fs = require('fs');
 const imageDataURI = require('image-data-uri');
 const latex = require('node-latex');
 const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey('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');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const base64 = require('file-base64');
 
 //create electronic signature image file - decode from data URI
