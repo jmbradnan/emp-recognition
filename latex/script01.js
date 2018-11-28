@@ -1,5 +1,4 @@
 require("dotenv").config();
-
 const fs = require('fs');
 const copyTo = require('pg-copy-streams').to;
 

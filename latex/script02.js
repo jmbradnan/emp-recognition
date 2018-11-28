@@ -25,7 +25,7 @@ const options = {
 	inputs: __dirname
 };
 
-pdf = latex(input, options); //run pdflatex 
+const pdf = latex(input, options); //run pdflatex 
  
 pdf.pipe(output);
 pdf.on('error', err => console.error(err));
@@ -74,8 +74,8 @@ nodemailer.createTestAccount((err, account) => {
         from: email_sender, // sender address 
         to: email_recipient, // list of receivers
         subject: 'Employee Recognition Award', // Subject line
-        text: 'Here is your certificate.', // plain text body
-        html: '<b>Here is your certificate.</b>', //html body
+        text: "Congratulations! In honor of your achievement, we would like to present this certificate for you.  Thank you for your contributions.", // plain text body
+        html: '<b>Congratulations! In honor of your achievement, we would like to present this certificate for you.  Thank you for your contributions.</b>', //html body
         attachments: [
             { 
                 filename: 'certificate.pdf',
