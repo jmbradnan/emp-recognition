@@ -24,6 +24,7 @@
     "express-session": "^1.15.6",
     "faker": "^4.1.0",
     "fetch": "^1.1.0",
+    "file-base64": "^1.0.0",
     "image-data-uri": "^2.0.0",
     "jquery": "^3.3.1",
     "moment": "^2.22.2",
